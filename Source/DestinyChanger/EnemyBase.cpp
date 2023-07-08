@@ -89,7 +89,7 @@ void AEnemyBase::ResetIsAttacked()
 	bIsAttacked = false;
 
 	//Debug
-	if (true) {
+	if (false) {
 
 		AActor* MyActor = this;
 

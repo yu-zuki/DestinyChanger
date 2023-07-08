@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/07/08　制作者：トウ　更新内容：敵の基本処理
 
 #pragma once
 
@@ -47,6 +47,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HP")
 		float MaxHP = 100.0f;
 
+public:
 	UFUNCTION(BlueprintCallable, Category = "HP")
 		virtual void Damage(float Damage);
 
@@ -61,6 +62,10 @@ public:
 		bool bIsAttacked = false;				//攻撃を受けたかどうか
 
 	void ResetIsAttacked(); 
+
+	//GetHP
+	UFUNCTION(BlueprintCallable, Category = "HP")
+		float GetHP() { return HP; }
 
 protected:
 	inline class ADestinyChangerGameMode* GetGameMode();

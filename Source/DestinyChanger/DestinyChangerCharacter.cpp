@@ -148,6 +148,7 @@ void ADestinyChangerCharacter::LightAttackCountUp()
 void ADestinyChangerCharacter::HitDecect()
 {
 	//hit detect
+	MainWeapon->CheckOverlap();
 }
 
 void ADestinyChangerCharacter::ToggleCombat(const FInputActionValue& Value)

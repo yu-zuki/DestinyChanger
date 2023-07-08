@@ -1,4 +1,4 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+﻿//制作日：2023/07/08　制作者：トウ　更新内容：委託イベントの追加
 
 #pragma once
 

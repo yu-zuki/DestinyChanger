@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "DestinyChangerGameMode.h"
+
 #include "EnemyBase.generated.h"
 
 UCLASS()
@@ -48,4 +50,10 @@ public:
 		bool bIsAttacked = false;				//çUåÇÇéÛÇØÇΩÇ©Ç«Ç§Ç©
 
 	void ResetIsAttacked() { bIsAttacked = false; }
+
+protected:
+	inline class ADestinyChangerGameMode* GetGameMode();
+public:
+	// static ADestinyChangerGameMode* GameMode;
+	ADestinyChangerGameMode* GameMode;
 };

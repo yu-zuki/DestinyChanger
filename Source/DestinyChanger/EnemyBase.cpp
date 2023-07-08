@@ -2,19 +2,24 @@
 
 
 #include "EnemyBase.h"
+#include "DestinyChangerGameMode.h"
+
+//ADestinyChangerGameMode* AEnemyBase::GameMode = nullptr;	//初期化
 
 // Sets default values
 AEnemyBase::AEnemyBase()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Bind 攻撃受けれる前（プレイヤーの攻撃アニメーションがPlayしたら）に　bIsAttacked　をfalseにする
+	GetGameMode()->AttackEndEventBind(this, &AEnemyBase::ResetIsAttacked);
 	
 }
 
@@ -41,6 +46,7 @@ void AEnemyBase::Damage(float Damage)
 	if (HP <= 0)	{
 		Death();
 	}
+	bIsAttacked = true;
 }
 
 void AEnemyBase::Heal(float Heal)
@@ -54,5 +60,21 @@ void AEnemyBase::Heal(float Heal)
 void AEnemyBase::Death()
 {
 	Destroy();
+}
+
+inline ADestinyChangerGameMode* AEnemyBase::GetGameMode()
+{
+	//キャシュー
+	if (GameMode == nullptr)	{
+		//GameModeを取得
+		GameMode = Cast<ADestinyChangerGameMode>(GetWorld()->GetAuthGameMode());
+		if (GameMode == nullptr)		{
+			UE_LOG(LogTemp, Warning, TEXT("GameModeが取得できませんでした"));
+			return nullptr;
+		}
+		return nullptr;
+	}
+
+	return GameMode;
 }
 

@@ -16,4 +16,5 @@ class DESTINYCHANGER_API UAttackEnd_AN : public UAnimNotify
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 	
+public:
 };

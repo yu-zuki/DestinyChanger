@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "BaseWeapon.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // ADestinyChangerCharacter
@@ -117,6 +119,28 @@ void ADestinyChangerCharacter::LightAttackCountUp()
 	}
 }
 
+void ADestinyChangerCharacter::HitDecect()
+{
+	//hit detect
+}
+
+void ADestinyChangerCharacter::ToggleCombat(const FInputActionValue& Value)
+{
+	//•Ší‚ðŽ‚Á‚Ä‚¢‚éê‡‚Í•Ší‚ÌØ‚è‘Ö‚¦‚ðs‚¤
+	if (MainWeapon)
+	{
+		if (!MainWeapon->GetIsAttached()) {
+			PlayAnimMontage(AnimMontage_WeaponDraw);
+			MainWeapon->SetIsAttached(true);
+		}
+		else
+		{
+			PlayAnimMontage(AnimMontage_WeaponDisarm);
+			MainWeapon->SetIsAttached(false);
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -138,6 +162,8 @@ void ADestinyChangerCharacter::SetupPlayerInputComponent(class UInputComponent* 
 		//Attacking
 		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &ADestinyChangerCharacter::LightAttack);
 		EnhancedInputComponent->BindAction(HeavyAttackAction, ETriggerEvent::Triggered, this, &ADestinyChangerCharacter::HeavyAttack);
+
+		EnhancedInputComponent->BindAction(ToggleCombatAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::ToggleCombat);
 
 	}
 
@@ -177,6 +203,16 @@ void ADestinyChangerCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void ADestinyChangerCharacter::SetMainWeapon(ABaseWeapon* _Weapon)
+{
+	MainWeapon = _Weapon;
+}
+
+ABaseWeapon* ADestinyChangerCharacter::GetMainWeapon() const
+{
+	return MainWeapon;
 }
 
 

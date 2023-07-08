@@ -104,5 +104,29 @@ protected:
 
 	EAttackComb eAttackComb = EAttackComb::LightAttackOne;
 	void LightAttackCountUp();
+
+public:
+	void HitDecect();
+
+//////////////
+//武器処理
+	class ABaseWeapon* MainWeapon;	// プレイヤーのメイン武器
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AniMontage", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AnimMontage_WeaponDraw;	    // 武器を構えるモーション
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AniMontage", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AnimMontage_WeaponDisarm;	// 武器をしまうモーション
+
+	void ToggleCombat(const FInputActionValue& Value);	// 戦闘モードの切り替え
+
+	//重い攻撃の入力
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* ToggleCombatAction;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		void SetMainWeapon(ABaseWeapon* _Weapon);
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		ABaseWeapon* GetMainWeapon() const;
 };
 

@@ -18,17 +18,26 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "initialize")
 		FName HandSocketName;	//装備時のアタッチ先
 
-	bool bIsAttached;	//手に装備するか？
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "initialize")
+		bool bIsAttachToHand = true;	//手に装備するか？
+
+	UFUNCTION(BlueprintPure, Category = "Attachment")
+		bool GetIsAttachToHand() const { return bIsAttachToHand; }
+
+	UFUNCTION(BlueprintCallable, Category = "Attachment")
+		void SetIsAttachToHand(bool bNewAttachToHand) { bIsAttachToHand = bNewAttachToHand; }
+
+	void AttachToHand();
+	void DetachFromHand();
+
 	UFUNCTION(BlueprintPure, Category = "Weapon")
 		FName GetHandSocketName() const { return HandSocketName; }
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 		void SetHandSocketName(FName NewSocketName) { HandSocketName = NewSocketName; }
 
-	bool GetIsAttached() const { return bIsAttached; }
-	void SetIsAttached(bool bNewIsAttached) { bIsAttached = bNewIsAttached; }
-
 	virtual void OnEquipped() override;
+	virtual void OnUnequipped() override;
 };

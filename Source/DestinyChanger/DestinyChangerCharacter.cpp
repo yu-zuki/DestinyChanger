@@ -51,6 +51,7 @@ ADestinyChangerCharacter::ADestinyChangerCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
 }
 
 void ADestinyChangerCharacter::BeginPlay()
@@ -66,10 +67,35 @@ void ADestinyChangerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	//Spawn Main Weapon
+	if (MainWeaponClass) {
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		MainWeapon = GetWorld()->SpawnActor<ABaseWeapon>(MainWeaponClass, SpawnParams);
+		if (MainWeapon) {
+			SetMainWeapon(MainWeapon);
+			MainWeapon->OnEquipped();
+		}
+	}
 }
 
 void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
 {
+	//武器を持っている場合は武器の切り替えを行う
+	if (MainWeapon) {
+		if (MainWeapon->GetIsAttachToHand()) {												//武器を持っているかどうか
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			if (AnimInstance && AnimInstance->Montage_IsPlaying(AnimMontage_WeaponDraw))	//武器を装備するアニメーションを再生中ならreturn
+				return;
+
+			PlayAnimMontage(AnimMontage_WeaponDraw);										//持ってない場合、武器を装備するアニメーションを再生	
+			return;
+		}
+	}
+
 	if (!bIsAttacking) {
 		//play light attack animation
 		if (LightAttackMontageOne && LightAttackMontageTwo && LightAttackMontageThree && LightAttackMontageFour) {
@@ -129,14 +155,12 @@ void ADestinyChangerCharacter::ToggleCombat(const FInputActionValue& Value)
 	//武器を持っている場合は武器の切り替えを行う
 	if (MainWeapon)
 	{
-		if (!MainWeapon->GetIsAttached()) {
+		if (MainWeapon->GetIsAttachToHand()) {
 			PlayAnimMontage(AnimMontage_WeaponDraw);
-			MainWeapon->SetIsAttached(true);
 		}
 		else
 		{
 			PlayAnimMontage(AnimMontage_WeaponDisarm);
-			MainWeapon->SetIsAttached(false);
 		}
 	}
 }
@@ -161,6 +185,7 @@ void ADestinyChangerCharacter::SetupPlayerInputComponent(class UInputComponent* 
 
 		//Attacking
 		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &ADestinyChangerCharacter::LightAttack);
+		//EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::LightAttack);
 		EnhancedInputComponent->BindAction(HeavyAttackAction, ETriggerEvent::Triggered, this, &ADestinyChangerCharacter::HeavyAttack);
 
 		EnhancedInputComponent->BindAction(ToggleCombatAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::ToggleCombat);

@@ -29,12 +29,12 @@ protected:
 		class USkeletalMeshComponent* ItemSkeletalMesh;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "initialize")
-		FName AttachSocketName;	//装備時のアタッチ先
 
 	UFUNCTION()
 		UPrimitiveComponent* GetItemMesh() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "initialize")
+		FName AttachSocketName;	//装備時のアタッチ先
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

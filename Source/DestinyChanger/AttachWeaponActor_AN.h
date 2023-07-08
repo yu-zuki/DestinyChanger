@@ -16,16 +16,8 @@ class DESTINYCHANGER_API UAttachWeaponActor_AN : public UAnimNotify
 	
 	UAttachWeaponActor_AN();
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "initialize")
-		bool bIsAttachToHand;	//éËÇ…ëïîıÇ∑ÇÈÇ©ÅH
 
 public:
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
-
-	UFUNCTION(BlueprintPure, Category = "Attachment")
-		bool GetIsAttachToHand() const { return bIsAttachToHand; }
-
-	UFUNCTION(BlueprintCallable, Category = "Attachment")
-		void SetIsAttachToHand(bool bNewAttachToHand) { bIsAttachToHand = bNewAttachToHand; }
 	
 };

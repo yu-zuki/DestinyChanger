@@ -3,12 +3,25 @@
 
 #include "BaseWeapon.h"
 
+void ABaseWeapon::AttachToHand()
+{
+	AttachActor(HandSocketName);
+	bIsAttachToHand = false;
+}
+
+void ABaseWeapon::DetachFromHand()
+{
+	AttachActor( AttachSocketName );
+	bIsAttachToHand = true;
+}
+
 void ABaseWeapon::OnEquipped()
 {
 	Super::OnEquipped();
+}
 
-	//ABattleSystemCharacter* Character = Cast<ABattleSystemCharacter>(GetOwner());
-	//if (Character) {
-	//	Character->SetMainWeapon(this);
-	//}
+void ABaseWeapon::OnUnequipped()
+{
+	Super::OnUnequipped();
+
 }

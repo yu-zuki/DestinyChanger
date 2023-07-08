@@ -81,11 +81,11 @@ public:
 
 protected:
 	//軽い攻撃の入力
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UInputAction* LightAttackAction;
 
 	//重い攻撃の入力
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UInputAction* HeavyAttackAction;
 
 	//入力アクションの処理
@@ -93,13 +93,13 @@ protected:
 	void HeavyAttack(const FInputActionValue& Value);
 
 	//攻撃のモーション1,2,3,4
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* LightAttackMontageOne;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* LightAttackMontageTwo;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* LightAttackMontageThree;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* LightAttackMontageFour;
 
 	EAttackComb eAttackComb = EAttackComb::LightAttackOne;
@@ -110,23 +110,26 @@ public:
 
 //////////////
 //武器処理
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		TSubclassOf<class ABaseWeapon> MainWeaponClass;	// プレイヤーのメイン武器のクラス
+
 	class ABaseWeapon* MainWeapon;	// プレイヤーのメイン武器
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AniMontage", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* AnimMontage_WeaponDraw;	    // 武器を構えるモーション
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AniMontage", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* AnimMontage_WeaponDisarm;	// 武器をしまうモーション
 
 	void ToggleCombat(const FInputActionValue& Value);	// 戦闘モードの切り替え
 
 	//重い攻撃の入力
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle")
 		class UInputAction* ToggleCombatAction;
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	UFUNCTION(BlueprintCallable, Category = "Battle")
 		void SetMainWeapon(ABaseWeapon* _Weapon);
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	UFUNCTION(BlueprintCallable, Category = "Battle")
 		ABaseWeapon* GetMainWeapon() const;
 };
 

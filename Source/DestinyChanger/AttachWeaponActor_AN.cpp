@@ -7,7 +7,6 @@
 
 
 UAttachWeaponActor_AN::UAttachWeaponActor_AN()
-	:bIsAttachToHand(false)
 {
 }
 
@@ -17,22 +16,15 @@ void UAttachWeaponActor_AN::Notify(USkeletalMeshComponent* MeshComp, UAnimSequen
 	if (Character) {
 		ABaseWeapon* MainWeapon = Character->GetMainWeapon();			//get main weapon
 		if (MainWeapon) {
-
-			FName tmp_AttachScoket = MainWeapon->GetAttachSocketName();	//get attach scoket name
-			FName tmp_HandScoket = MainWeapon->GetHandSocketName();		//get hand scoket name
-
-			if (bIsAttachToHand) //is hand scoket			
-			{
-				MainWeapon->AttachActor(tmp_HandScoket);				//attach to hand
+			if (MainWeapon->GetIsAttachToHand()) {
+				MainWeapon->AttachToHand();
 			}
 			else {
-				MainWeapon->AttachActor(tmp_AttachScoket);				//attach to attach scoket
+				MainWeapon->DetachFromHand();
 			}
-
 		}
 	}
-	else
-	{
+	else	{
 		UE_LOG(LogTemp, Warning, TEXT("Character is not found"));
 	}
 }

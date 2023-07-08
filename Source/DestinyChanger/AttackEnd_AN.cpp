@@ -2,15 +2,13 @@
 
 
 #include "AttackEnd_AN.h"
-#include "Kismet/GameplayStatics.h"
-#include "DestinyChanger/DestinyChangerGameMode.h"
-
+#include "DestinyChangerCharacter.h"
 
 void UAttackEnd_AN::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	//GameMode ‚ğæ“¾
-	ADestinyChangerGameMode* GameMode = Cast<ADestinyChangerGameMode>(UGameplayStatics::GetGameMode(MeshComp->GetWorld()));
-	if (GameMode)	{
-		GameMode->AttackEndEventCall();	//
+	//ƒvƒŒƒCƒ„[‚ğæ“¾
+	ADestinyChangerCharacter* Player = Cast<ADestinyChangerCharacter>(MeshComp->GetOwner());
+	if (Player)	{
+		Player->bIsAttacking = false;
 	}
 }

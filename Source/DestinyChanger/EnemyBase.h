@@ -17,10 +17,12 @@ public:
 	// Sets default values for this pawn's properties
 	AEnemyBase();
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void BeginDestroy() override;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -28,7 +30,16 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//HP
+private:
+	//Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
+		class UCapsuleComponent* CapsuleComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* StaticMeshComponent;
+
+//////////
+///HP
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HP")
 		float HP = 100.0f;
@@ -49,7 +60,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HP")
 		bool bIsAttacked = false;				//çUåÇÇéÛÇØÇΩÇ©Ç«Ç§Ç©
 
-	void ResetIsAttacked() { bIsAttacked = false; }
+	void ResetIsAttacked(); 
 
 protected:
 	inline class ADestinyChangerGameMode* GetGameMode();

@@ -1,16 +1,29 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "EnemyBase.h"
 #include "DestinyChangerGameMode.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
 
-//ADestinyChangerGameMode* AEnemyBase::GameMode = nullptr;	//‰Šú‰»
+
+//ADestinyChangerGameMode* AEnemyBase::GameMode = nullptr;	//åˆæœŸåŒ–
 
 // Sets default values
 AEnemyBase::AEnemyBase()
+	:HP(100.f), MaxHP(100.f), bIsAttacked(false)
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	//Create UCapsuleComponent
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+	RootComponent = CapsuleComponent;
+
+	//Create UStaticMeshComponent
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	StaticMeshComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -18,9 +31,18 @@ void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Bind UŒ‚ó‚¯‚ê‚é‘OiƒvƒŒƒCƒ„[‚ÌUŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“‚ªPlay‚µ‚½‚çj‚É@bIsAttacked@‚ğfalse‚É‚·‚é
+	//Bind æ”»æ’ƒå—ã‘ã‚Œã‚‹å‰ï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒPlayã—ãŸã‚‰ï¼‰ã«ã€€bIsAttackedã€€ã‚’falseã«ã™ã‚‹
 	GetGameMode()->AttackEndEventBind(this, &AEnemyBase::ResetIsAttacked);
 	
+}
+
+void AEnemyBase::BeginDestroy()
+{
+
+	Super::BeginDestroy();
+
+	//GetGameMode()->AttackEndEventUnBind(this, &AEnemyBase::ResetIsAttacked);
+	//UnBind
 }
 
 // Called every frame
@@ -39,7 +61,7 @@ void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void AEnemyBase::Damage(float Damage)
 {
-	if(bIsAttacked)		//ƒvƒŒƒCƒ„[‚ÌUŒ‚ƒAƒjƒ‚ªI‚í‚Á‚Ä‚¢‚È‚¢‚Æ‚«‚Íƒ_ƒ[ƒW‚ğó‚¯‚È‚¢i2‰ñUŒ‚‚³‚ê‚é‚Ì‚ğ–h‚®j
+	if(bIsAttacked)		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãŒçµ‚ã‚ã£ã¦ã„ãªã„ã¨ãã¯ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ãªã„ï¼ˆ2å›æ”»æ’ƒã•ã‚Œã‚‹ã®ã‚’é˜²ãï¼‰
 		return;
 
 	HP -= Damage;		//HP = HP - Damage
@@ -62,17 +84,38 @@ void AEnemyBase::Death()
 	Destroy();
 }
 
+void AEnemyBase::ResetIsAttacked()
+{ 
+	bIsAttacked = false;
+
+	//Debug
+	if (true) {
+
+		AActor* MyActor = this;
+
+		// è·å– MyActor çš„ UniqueID å’Œåç§°
+		int32 UniqueID = MyActor->GetUniqueID();
+		FString Name = MyActor->GetName();
+
+		// ä½¿ç”¨ FString::Printf å‡½æ•°æ ¼å¼åŒ–è¾“å‡ºå­—ç¬¦ä¸²
+		FString OutputString = FString::Printf(TEXT("UniqueID: %d, Name: %s"), UniqueID, *Name);
+
+		// å°†æ ¼å¼åŒ–åçš„å­—ç¬¦ä¸²è¾“å‡ºåˆ°å±å¹•ä¸Š
+		UKismetSystemLibrary::PrintString(this, OutputString);
+	}
+}
+
 inline ADestinyChangerGameMode* AEnemyBase::GetGameMode()
 {
-	//ƒLƒƒƒVƒ…[
+	//ã‚­ãƒ£ã‚·ãƒ¥ãƒ¼
 	if (GameMode == nullptr)	{
-		//GameMode‚ğæ“¾
+		//GameModeã‚’å–å¾—
 		GameMode = Cast<ADestinyChangerGameMode>(GetWorld()->GetAuthGameMode());
 		if (GameMode == nullptr)		{
-			UE_LOG(LogTemp, Warning, TEXT("GameMode‚ªæ“¾‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½"));
+			UE_LOG(LogTemp, Warning, TEXT("GameModeãŒå–å¾—ã§ãã¾ã›ã‚“ã§ã—ãŸ"));
 			return nullptr;
 		}
-		return nullptr;
+		return GameMode;
 	}
 
 	return GameMode;

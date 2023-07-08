@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/07/08　制作者：トウ　更新内容：武器の基礎クラス
+
 
 #pragma once
 
@@ -13,6 +14,12 @@ UCLASS()
 class DESTINYCHANGER_API ABaseWeapon : public ABaseEquippable
 {
 	GENERATED_BODY()
+
+public:
+	virtual void BeginPlay() override;
+
+	//オーバーラップイベント
+	//void OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "initialize")
@@ -40,4 +47,7 @@ public:
 
 	virtual void OnEquipped() override;
 	virtual void OnUnequipped() override;
+
+	void CheckOverlap();	//オーバーラップをチェックする
+	void EnemyOnOverlap(class AActor* EnemyActor);	//敵とOverrap時の処理
 };

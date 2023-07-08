@@ -1,15 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/07/08　制作者：トウ　更新内容：敵の基本処理
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "DestinyChangerGameMode.h"
+#include "InputActionValue.h"
+#include "GameFramework/Character.h"
 
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class DESTINYCHANGER_API AEnemyBase : public APawn
+class DESTINYCHANGER_API AEnemyBase : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -23,20 +25,32 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void BeginDestroy() override;
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	//Component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
-		class UCapsuleComponent* CapsuleComponent;
+	////Component
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	//	class UCapsuleComponent* CapsuleComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
-		class UStaticMeshComponent* StaticMeshComponent;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	//	class UStaticMeshComponent* StaticMeshComponent;
+
+	////Arrow
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	//	class UArrowComponent* ArrowComponent;
+
+	////SkeletonMesh
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	//	class USkeletalMeshComponent* SkeletalMeshComponent;
+
+protected:
+	//AnimMontage Attacked
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AttackedAnimMontage;
+
+
 
 //////////
 ///HP
@@ -47,6 +61,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HP")
 		float MaxHP = 100.0f;
 
+public:
 	UFUNCTION(BlueprintCallable, Category = "HP")
 		virtual void Damage(float Damage);
 
@@ -61,6 +76,10 @@ public:
 		bool bIsAttacked = false;				//攻撃を受けたかどうか
 
 	void ResetIsAttacked(); 
+
+	//GetHP
+	UFUNCTION(BlueprintCallable, Category = "HP")
+		float GetHP() { return HP; }
 
 protected:
 	inline class ADestinyChangerGameMode* GetGameMode();

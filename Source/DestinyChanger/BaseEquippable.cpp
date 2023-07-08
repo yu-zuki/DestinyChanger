@@ -28,7 +28,8 @@ void ABaseEquippable::BeginPlay()
 
 	//コリジョンをプレイヤーに無効化
 	if (ItemSkeletalMesh) ItemSkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	if (ItemStaticMesh) ItemStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	//if (ItemStaticMesh) ItemStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 }
 

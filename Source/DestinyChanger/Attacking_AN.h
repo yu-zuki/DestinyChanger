@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/07/08　制作者：トウ　更新内容：攻撃アニメーションの間に敵に攻撃処理を行うためのアニメーションノーティファイを作成
+
 
 #pragma once
 

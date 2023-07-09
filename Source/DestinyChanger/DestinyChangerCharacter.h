@@ -48,6 +48,11 @@ class ADestinyChangerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+private:
+	/** Attack Assist Component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack Assist", meta = (AllowPrivateAccess = "true"))
+	class UAttackAssistComponent* AttackAssistComponent;
+
 public:
 	ADestinyChangerCharacter();
 	
@@ -109,7 +114,7 @@ protected:
 	void LightAttackCountUp();
 
 public:
-	void HitDecect();
+	void HitDecect();	
 
 //////////////
 //ïêäÌèàóù
@@ -134,5 +139,8 @@ public:
 		void SetMainWeapon(ABaseWeapon* _Weapon);
 	UFUNCTION(BlueprintCallable, Category = "Battle")
 		ABaseWeapon* GetMainWeapon() const;
+
+public:
+	UAttackAssistComponent* GetAttackAssistComponent() const;
 };
 

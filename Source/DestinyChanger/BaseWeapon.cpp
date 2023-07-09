@@ -6,6 +6,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "EnemyBase.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "DestinyChangerCharacter.h"
+#include "AttackAssistComponent.h"
+
 
 void ABaseWeapon::BeginPlay()
 {
@@ -64,9 +67,17 @@ void ABaseWeapon::EnemyOnOverlap(AActor* EnemyActor)
 
 		Enemy->Damage(10);
 
+		//HitStop
+		AActor* Player = GetOwner();
+		if (Player) {
+			ADestinyChangerCharacter* DestinyChangerCharacter = Cast<ADestinyChangerCharacter>(Player);
+			if (DestinyChangerCharacter) {
+				DestinyChangerCharacter->GetAttackAssistComponent()->HitStop();
+			}
+		}
+
 		//使用KismetSystemLibrary::PrintString()打印Enemy的名字与血量
 		FString OutputString = FString::Printf(TEXT("Enemy: %s, Health: %f"), *Enemy->GetName(), Enemy->GetHP());
-
 		UKismetSystemLibrary::PrintString(this, OutputString);
 	}
 }

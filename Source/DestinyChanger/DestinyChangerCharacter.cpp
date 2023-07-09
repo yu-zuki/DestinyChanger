@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "AttackAssistComponent.h"
 #include "BaseWeapon.h"
 
 
@@ -52,6 +54,8 @@ ADestinyChangerCharacter::ADestinyChangerCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
+	//Player Attack Assist Component
+	AttackAssistComponent = CreateDefaultSubobject<UAttackAssistComponent>(TEXT("AttackAssistComponent"));
 }
 
 void ADestinyChangerCharacter::BeginPlay()
@@ -96,7 +100,11 @@ void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
 		}
 	}
 
+	//•Ší‚ðŽ‚Á‚Ä‚¢‚éê‡‚ÍUŒ‚‚ðs‚¤
 	if (!bIsAttacking) {
+		//Attack Assist Component‚ÅŠp“x‚ðC³
+		AttackAssistComponent->CorrectAttackAngle();
+
 		//play light attack animation
 		if (LightAttackMontageOne && LightAttackMontageTwo && LightAttackMontageThree && LightAttackMontageFour) {
 			switch (eAttackComb)
@@ -124,6 +132,7 @@ void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
 
 void ADestinyChangerCharacter::HeavyAttack(const FInputActionValue& Value)
 {
+	UGameplayStatics::OpenLevel(GetWorld(), FName( *UGameplayStatics::GetCurrentLevelName( GetWorld() ) ) );
 }
 
 void ADestinyChangerCharacter::LightAttackCountUp()
@@ -154,15 +163,8 @@ void ADestinyChangerCharacter::HitDecect()
 void ADestinyChangerCharacter::ToggleCombat(const FInputActionValue& Value)
 {
 	//•Ší‚ðŽ‚Á‚Ä‚¢‚éê‡‚Í•Ší‚ÌØ‚è‘Ö‚¦‚ðs‚¤
-	if (MainWeapon)
-	{
-		if (MainWeapon->GetIsAttachToHand()) {
-			PlayAnimMontage(AnimMontage_WeaponDraw);
-		}
-		else
-		{
-			PlayAnimMontage(AnimMontage_WeaponDisarm);
-		}
+	if (MainWeapon) {
+		(MainWeapon->GetIsAttachToHand()) ? PlayAnimMontage(AnimMontage_WeaponDraw) : PlayAnimMontage(AnimMontage_WeaponDisarm);
 	}
 }
 
@@ -239,6 +241,11 @@ void ADestinyChangerCharacter::SetMainWeapon(ABaseWeapon* _Weapon)
 ABaseWeapon* ADestinyChangerCharacter::GetMainWeapon() const
 {
 	return MainWeapon;
+}
+
+UAttackAssistComponent* ADestinyChangerCharacter::GetAttackAssistComponent() const
+{
+	return AttackAssistComponent;
 }
 
 

@@ -30,20 +30,6 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	////Component
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
-	//	class UCapsuleComponent* CapsuleComponent;
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
-	//	class UStaticMeshComponent* StaticMeshComponent;
-
-	////Arrow
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
-	//	class UArrowComponent* ArrowComponent;
-
-	////SkeletonMesh
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
-	//	class USkeletalMeshComponent* SkeletalMeshComponent;
 
 protected:
 	//AnimMontage Attacked

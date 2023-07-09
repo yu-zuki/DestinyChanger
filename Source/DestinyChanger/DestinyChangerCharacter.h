@@ -48,6 +48,11 @@ class ADestinyChangerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+private:
+	/** Attack Assist Component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack Assist", meta = (AllowPrivateAccess = "true"))
+	class UAttackAssistComponent* AttackAssistComponent;
+
 public:
 	ADestinyChangerCharacter();
 	

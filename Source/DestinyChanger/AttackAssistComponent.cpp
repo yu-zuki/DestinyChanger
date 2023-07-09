@@ -7,21 +7,14 @@
 // Sets default values for this component's properties
 UAttackAssistComponent::UAttackAssistComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 
 // Called when the game starts
 void UAttackAssistComponent::BeginPlay()
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	Super::BeginPlay();	
 }
 
 
@@ -29,10 +22,9 @@ void UAttackAssistComponent::BeginPlay()
 void UAttackAssistComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
+/// \brief 攻撃の角度を最も近い敵に修正する。
 void UAttackAssistComponent::CorrectAttackAngle()
 {
 	AActor* NearestEnemy = SelectNearestEnemy();	// 最も近い敵を取得する
@@ -43,13 +35,25 @@ void UAttackAssistComponent::CorrectAttackAngle()
 		FVector direction = NearestEnemy->GetActorLocation() - GetOwner()->GetActorLocation();
 		direction.Normalize();
 
+		// プレイヤーの向きを取得する
+		FRotator CurrentRotation = GetOwner()->GetActorRotation();
+
 		// プレイヤーの向きを変更する
-		GetOwner()->SetActorRotation(direction.Rotation());		
+		FRotator NewRotation(CurrentRotation.Pitch, direction.Rotation().Yaw, CurrentRotation.Roll);
+		GetOwner()->SetActorRotation(NewRotation);
 	}
 }
 
+/// \brief 最も近い敵を選択する
 AActor* UAttackAssistComponent::SelectNearestEnemy()
 {
+	if (EnemyBaseClass == nullptr)	{
+
+		// エラー処理
+		UE_LOG(LogTemp, Error, TEXT("AttackAssitComponent: EnemyBaseClass is nullptr"));
+		return nullptr;
+	}
+
 	// 全ての敵を取得する
 	TArray<AActor*> FoundEnemies;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), EnemyBaseClass, FoundEnemies);

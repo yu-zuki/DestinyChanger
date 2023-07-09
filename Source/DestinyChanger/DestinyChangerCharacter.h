@@ -114,7 +114,7 @@ protected:
 	void LightAttackCountUp();
 
 public:
-	void HitDecect();
+	void HitDecect();	
 
 //////////////
 //•Šíˆ—
@@ -139,5 +139,8 @@ public:
 		void SetMainWeapon(ABaseWeapon* _Weapon);
 	UFUNCTION(BlueprintCallable, Category = "Battle")
 		ABaseWeapon* GetMainWeapon() const;
+
+public:
+	UAttackAssistComponent* GetAttackAssistComponent() const;
 };
 

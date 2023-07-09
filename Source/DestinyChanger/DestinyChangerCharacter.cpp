@@ -163,15 +163,8 @@ void ADestinyChangerCharacter::HitDecect()
 void ADestinyChangerCharacter::ToggleCombat(const FInputActionValue& Value)
 {
 	//•Ší‚ðŽ‚Á‚Ä‚¢‚éê‡‚Í•Ší‚ÌØ‚è‘Ö‚¦‚ðs‚¤
-	if (MainWeapon)
-	{
-		if (MainWeapon->GetIsAttachToHand()) {
-			PlayAnimMontage(AnimMontage_WeaponDraw);
-		}
-		else
-		{
-			PlayAnimMontage(AnimMontage_WeaponDisarm);
-		}
+	if (MainWeapon) {
+		(MainWeapon->GetIsAttachToHand()) ? PlayAnimMontage(AnimMontage_WeaponDraw) : PlayAnimMontage(AnimMontage_WeaponDisarm);
 	}
 }
 
@@ -248,6 +241,11 @@ void ADestinyChangerCharacter::SetMainWeapon(ABaseWeapon* _Weapon)
 ABaseWeapon* ADestinyChangerCharacter::GetMainWeapon() const
 {
 	return MainWeapon;
+}
+
+UAttackAssistComponent* ADestinyChangerCharacter::GetAttackAssistComponent() const
+{
+	return AttackAssistComponent;
 }
 
 

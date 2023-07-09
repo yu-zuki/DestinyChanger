@@ -3,6 +3,7 @@
 
 #include "AttackAssistComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
 UAttackAssistComponent::UAttackAssistComponent()
@@ -44,6 +45,23 @@ void UAttackAssistComponent::CorrectAttackAngle()
 	}
 }
 
+void UAttackAssistComponent::HitStop(float _HitStopSpeed)
+{
+	//CharacterGet
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (Character == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("AttackAssitComponent: Character is nullptr"));
+		return;
+	}
+
+	//HitStopÇäJén
+	Character->GetMesh()->GlobalAnimRateScale = _HitStopSpeed > 0.f ? _HitStopSpeed : HitStopSpeed;
+
+	//HitStopÇí‚é~
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.SetTimer(TimerHandle_HitStop, this, &UAttackAssistComponent::HitStopProcess, HitStopTime, false);
+}
+
 /// \brief ç≈Ç‡ãﬂÇ¢ìGÇëIëÇ∑ÇÈ
 AActor* UAttackAssistComponent::SelectNearestEnemy()
 {
@@ -79,5 +97,18 @@ AActor* UAttackAssistComponent::SelectNearestEnemy()
 	}
 
 	return nullptr;
+}
+
+void UAttackAssistComponent::HitStopProcess()
+{
+	//CharacterGet
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (Character == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("AttackAssitComponent: Character is nullptr"));
+		return;
+	}
+
+	//HitStopÇí‚é~
+	Character->GetMesh()->GlobalAnimRateScale = 1.f;
 }
 

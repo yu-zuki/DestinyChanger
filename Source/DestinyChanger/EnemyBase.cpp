@@ -17,7 +17,6 @@
 AEnemyBase::AEnemyBase()
 	:HP(100.f), MaxHP(100.f), bIsAttacked(false)
 {
-
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -40,22 +39,6 @@ AEnemyBase::AEnemyBase()
 
  //	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
-
-	////Create UCapsuleComponent
-	//CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
-	//RootComponent = CapsuleComponent;
-
-	////Create UStaticMeshComponent
-	//StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	//StaticMeshComponent->SetupAttachment(RootComponent);
-
-	////Create UArrowComponent
-	//ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
-	//ArrowComponent->SetupAttachment(RootComponent);
-
-	////Create USkeletalMeshComponent
-	//SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
-	//SkeletalMeshComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -91,6 +74,8 @@ void AEnemyBase::Damage(float Damage)
 
 	if(AttackedAnimMontage)		//攻撃アニメーションがあるときはそれを再生
 		PlayAnimMontage(AttackedAnimMontage);
+
+	//HitStop
 
 	HP -= Damage;		//HP = HP - Damage
 	if (HP <= 0)	{

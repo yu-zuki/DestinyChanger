@@ -24,21 +24,37 @@ public:
 	/// 攻撃の角度を修正する。
 	void CorrectAttackAngle();
 
+	//HitStopを行う
+	void HitStop(float _HitStopSpeed = -1.f);
+
+private:
 	/// 最も近い敵を選択する。
 	AActor* SelectNearestEnemy();
 
-protected:
+	//MinDistanceの範囲内かどうかを判定する
+	inline bool IsInSearchRange(float distance)	{	return distance <= MaxSearchDistance;	}
 
+	//HitStop処理
+	void HitStopProcess();
+
+
+protected:
 	/// 敵を表すベースとなるアクタークラス。
-	UPROPERTY(EditAnywhere, Category = "Attack Assist")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack Assist")
 		TSubclassOf<AActor> EnemyBaseClass;
 
 	// 攻撃範囲内にいる敵を判定するための距離 (単位cm)。
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackAssist" )
 		float MaxSearchDistance = 300.f;
 
-private:
+	//HitStopの速度
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackAssist" )
+		float HitStopSpeed = 0.01f;
 
-	//MinDistanceの範囲内かどうかを判定する
-	inline bool IsInSearchRange(float distance)	{	return distance <= MaxSearchDistance;	}
+	//HitStopの時間
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AttackAssist" )
+		float HitStopTime = 0.2f;
+
+private:
+	FTimerHandle TimerHandle_HitStop;
 };

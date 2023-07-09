@@ -14,6 +14,13 @@ ADestinyChangerGameMode::ADestinyChangerGameMode()
 	//}
 }
 
+void ADestinyChangerGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	AttackEnd.Clear();	//Clear 
+}
+
 /**
  * @brief   AttackEndEventCall関数は、全ての敵キャラクターが攻撃を受けられるようにする関数です。
  *

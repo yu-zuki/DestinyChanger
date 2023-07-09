@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//制作日：2023/07/09　制作者：トウ　更新内容：プレイヤー角度の修正を行う処理を追加
+//制作日：2023/07/09　制作者：トウ　更新内容：プレイヤーが敵を攻撃した際にHitStop処理を追加
 #pragma once
 
 #include "CoreMinimal.h"

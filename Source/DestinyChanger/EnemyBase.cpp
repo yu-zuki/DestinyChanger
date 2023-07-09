@@ -6,6 +6,9 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/ArrowComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 //ADestinyChangerGameMode* AEnemyBase::GameMode = nullptr;	//初期化
@@ -14,16 +17,45 @@
 AEnemyBase::AEnemyBase()
 	:HP(100.f), MaxHP(100.f), bIsAttacked(false)
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
 
-	//Create UCapsuleComponent
-	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
-	RootComponent = CapsuleComponent;
+	// Set size for collision capsule
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	//Create UStaticMeshComponent
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	StaticMeshComponent->SetupAttachment(RootComponent);
+	// Don't rotate when the controller rotates. Let that just affect the camera.
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	// Configure character movement
+	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+
+	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
+	// instead of recompiling to adjust them
+	GetCharacterMovement()->JumpZVelocity = 700.f;
+	GetCharacterMovement()->AirControl = 0.35f;
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
+ //	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	//PrimaryActorTick.bCanEverTick = true;
+
+	////Create UCapsuleComponent
+	//CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+	//RootComponent = CapsuleComponent;
+
+	////Create UStaticMeshComponent
+	//StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	//StaticMeshComponent->SetupAttachment(RootComponent);
+
+	////Create UArrowComponent
+	//ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
+	//ArrowComponent->SetupAttachment(RootComponent);
+
+	////Create USkeletalMeshComponent
+	//SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	//SkeletalMeshComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -45,17 +77,10 @@ void AEnemyBase::BeginDestroy()
 	//UnBind
 }
 
-// Called every frame
-void AEnemyBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 // Called to bind functionality to input
 void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	//Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
 
@@ -63,6 +88,9 @@ void AEnemyBase::Damage(float Damage)
 {
 	if(bIsAttacked)		//プレイヤーの攻撃アニメが終わっていないときはダメージを受けない（2回攻撃されるのを防ぐ）
 		return;
+
+	if(AttackedAnimMontage)		//攻撃アニメーションがあるときはそれを再生
+		PlayAnimMontage(AttackedAnimMontage);
 
 	HP -= Damage;		//HP = HP - Damage
 	if (HP <= 0)	{

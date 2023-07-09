@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "DestinyChangerGameMode.h"
+#include "InputActionValue.h"
+#include "GameFramework/Character.h"
 
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class DESTINYCHANGER_API AEnemyBase : public APawn
+class DESTINYCHANGER_API AEnemyBase : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -23,20 +25,32 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void BeginDestroy() override;
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	//Component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
-		class UCapsuleComponent* CapsuleComponent;
+	////Component
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	//	class UCapsuleComponent* CapsuleComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
-		class UStaticMeshComponent* StaticMeshComponent;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	//	class UStaticMeshComponent* StaticMeshComponent;
+
+	////Arrow
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	//	class UArrowComponent* ArrowComponent;
+
+	////SkeletonMesh
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	//	class USkeletalMeshComponent* SkeletalMeshComponent;
+
+protected:
+	//AnimMontage Attacked
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AttackedAnimMontage;
+
+
 
 //////////
 ///HP

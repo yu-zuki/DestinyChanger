@@ -16,6 +16,8 @@ class ADestinyChangerGameMode : public AGameModeBase
 public:
 	ADestinyChangerGameMode();
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	AttackEndEventSignature AttackEnd;			
 
 	template <typename ObjectType, typename MethodType>

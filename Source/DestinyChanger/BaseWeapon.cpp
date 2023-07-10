@@ -6,9 +6,18 @@
 #include "Components/StaticMeshComponent.h"
 #include "EnemyBase.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/CapsuleComponent.h"
+
 #include "DestinyChangerCharacter.h"
 #include "AttackAssistComponent.h"
+#include "Engine/World.h"
 
+
+ABaseWeapon::ABaseWeapon()
+{
+	WeaponCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("WeaponCollision"));
+	WeaponCollision->SetupAttachment(ItemStaticMesh);
+}
 
 void ABaseWeapon::BeginPlay()
 {
@@ -38,26 +47,67 @@ void ABaseWeapon::OnUnequipped()
 
 }
 
+//チェック
 void ABaseWeapon::CheckOverlap()
 {
-	TArray<FOverlapResult> Overlaps;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this); // 忽略自身
-	FComponentQueryParams ComponentQueryParams;
-	FCollisionObjectQueryParams ObjectQueryParams(ECollisionChannel::ECC_GameTraceChannel1);
+	TArray<FHitResult> HitResults;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
 
-	GetWorld()->ComponentOverlapMulti(Overlaps, ItemStaticMesh, ItemStaticMesh->GetComponentLocation(), ItemStaticMesh->GetComponentRotation(), ComponentQueryParams, ObjectQueryParams);
+	FVector Start = WeaponCollision->GetComponentLocation();
+	FVector End = Start;// + GetActorForwardVector() * 100.0f;
+	FQuat Rot = WeaponCollision->GetComponentQuat();			// 
+	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(WeaponCollision->GetScaledCapsuleRadius(), WeaponCollision->GetScaledCapsuleHalfHeight());
 
-	for (const FOverlapResult& Result : Overlaps)
-	{
-		EnemyOnOverlap(Result.GetActor());
+	bool isHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, Rot, ECollisionChannel::ECC_GameTraceChannel1, CollisionShape, CollisionParams);
+	
+	//if (isHit != true) { return; }
+
+	if (false)	{
+		DrawDebugCapsule(GetWorld(), (Start + End) / 2,
+			CollisionShape.GetCapsuleHalfHeight(),
+			CollisionShape.GetCapsuleRadius(), Rot, FColor::Red, true, -1.0f, 0, 1.0f);
 	}
 
+	for (FHitResult HitResult : HitResults)	{
+		EnemyOnOverlap(HitResult);
+	}
 }
 
-void ABaseWeapon::EnemyOnOverlap(AActor* EnemyActor)
+void ABaseWeapon::EnemyOnOverlap(FHitResult& _HitResult)
 {
+	//Cast
+	AEnemyBase* Enemy = Cast<AEnemyBase>(_HitResult.GetActor());
+	if (Enemy) {
+		if (Enemy->bIsAttacked) {
+			return;
+		}
 
+		Enemy->Damage(fDamage);						//敵にダメージを与える
+		FVector Center = _HitResult.Location;	//ヒットエフェクトの位置
+
+		AActor* Player = GetOwner();			//プレイヤーのヒットストップ処理
+		if (Player) {
+			ADestinyChangerCharacter* DestinyChangerCharacter = Cast<ADestinyChangerCharacter>(Player);
+			if (DestinyChangerCharacter) {
+				DestinyChangerCharacter->GetAttackAssistComponent()->HitStop();
+			}
+		}
+
+		//Debug
+		FQuat Rotation = FQuat::Identity;
+		FVector Extent = FVector(5, 5, 5);
+
+		DrawDebugBox(GetWorld(), Center, Extent, Rotation, FColor::Green, false, 5.0f, 0, 1.0f);
+		//Enemyの名前とHPをPrintStringで表示
+		FString OutputString = FString::Printf(TEXT("Enemy: %s, Health: %f"), *Enemy->GetName(), Enemy->GetHP());
+		UKismetSystemLibrary::PrintString(this, OutputString);
+	}
+}
+
+//破棄
+void ABaseWeapon::EnemyOnOverlap(AActor* EnemyActor,FVector HitLocation)
+{
 	//Cast
 	AEnemyBase* Enemy = Cast<AEnemyBase>(EnemyActor);
 	if (Enemy)	{

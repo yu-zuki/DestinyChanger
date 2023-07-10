@@ -48,10 +48,13 @@ class ADestinyChangerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
-private:
+protected:
 	/** Attack Assist Component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack Assist", meta = (AllowPrivateAccess = "true"))
 	class UAttackAssistComponent* AttackAssistComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack Assist", meta = (AllowPrivateAccess = "true"))
+	class UFreeformRollComponent* FreeformRollComponent;
 
 public:
 	ADestinyChangerCharacter();
@@ -139,6 +142,16 @@ public:
 		void SetMainWeapon(ABaseWeapon* _Weapon);
 	UFUNCTION(BlueprintCallable, Category = "Battle")
 		ABaseWeapon* GetMainWeapon() const;
+
+//////////////
+//‰ñ”ğˆ—
+protected:
+	//‰ñ”ğ‚Ì“ü—Í
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UInputAction* RollAction;
+
+	//‰ñ”ğ‚Ìˆ—
+	void Roll(const FInputActionValue& Value);
 
 public:
 	UAttackAssistComponent* GetAttackAssistComponent() const;

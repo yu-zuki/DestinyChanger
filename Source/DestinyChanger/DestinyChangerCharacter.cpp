@@ -12,6 +12,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "AttackAssistComponent.h"
+#include "FreeformRollComponent.h"
 #include "BaseWeapon.h"
 
 
@@ -55,7 +56,8 @@ ADestinyChangerCharacter::ADestinyChangerCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	//Player Attack Assist Component
-	AttackAssistComponent = CreateDefaultSubobject<UAttackAssistComponent>(TEXT("AttackAssistComponent"));
+	FreeformRollComponent = CreateDefaultSubobject<UFreeformRollComponent>(TEXT("FreeformRoll"));
+	AttackAssistComponent = CreateDefaultSubobject<UAttackAssistComponent>(TEXT("AttackAssist"));
 }
 
 void ADestinyChangerCharacter::BeginPlay()
@@ -100,7 +102,7 @@ void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
 		}
 	}
 
-	//•Ší‚ðŽ‚Á‚Ä‚¢‚éê‡‚ÍUŒ‚‚ðs‚¤
+	//UŒ‚’†‚Å‚Í‚È‚¢Žž‚Ì‚ÝUŒ‚‚ðs‚¤
 	if (!bIsAttacking) {
 		//Attack Assist Component‚ÅŠp“x‚ðC³
 		AttackAssistComponent->CorrectAttackAngle();
@@ -193,6 +195,7 @@ void ADestinyChangerCharacter::SetupPlayerInputComponent(class UInputComponent* 
 
 		EnhancedInputComponent->BindAction(ToggleCombatAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::ToggleCombat);
 
+		EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::Roll);
 	}
 
 }
@@ -241,6 +244,12 @@ void ADestinyChangerCharacter::SetMainWeapon(ABaseWeapon* _Weapon)
 ABaseWeapon* ADestinyChangerCharacter::GetMainWeapon() const
 {
 	return MainWeapon;
+}
+
+void ADestinyChangerCharacter::Roll(const FInputActionValue& Value)
+{
+	FreeformRollComponent->RollProcess();
+	bIsAttacking = false;
 }
 
 UAttackAssistComponent* ADestinyChangerCharacter::GetAttackAssistComponent() const

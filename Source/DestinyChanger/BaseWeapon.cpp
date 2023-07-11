@@ -63,7 +63,7 @@ void ABaseWeapon::CheckOverlap()
 	
 	//if (isHit != true) { return; }
 
-	if (true)	{
+	if (false)	{
 		DrawDebugCapsule(GetWorld(), (Start + End) / 2,
 			CollisionShape.GetCapsuleHalfHeight(),
 			CollisionShape.GetCapsuleRadius(), Rot, FColor::Red, true, -1.0f, 0, 1.0f);

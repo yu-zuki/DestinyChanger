@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/07/12　制作者：トウ　処理内容：攻撃時のエフェクト：粒子エフェクト
 
 #pragma once
 
@@ -14,12 +14,14 @@ class DESTINYCHANGER_API UAttackEffectParticle_ANS : public UAnimNotifyState_Tim
 {
 	GENERATED_BODY()
 	
+	//粒子エフェクトのスポーン位置
 	UPROPERTY(EditAnywhere, Category = ParticleSystem, meta = (ToolTip = "The socket or bone to attach the system to"))
 	FName SocketName2;
 
 	UPROPERTY(EditAnywhere, Category = ParticleSystem, meta = (ToolTip = "The socket or bone to attach the system to"))
 	FName SocketName3;
 public:
+	//粒子エフェクトのスポーンと消滅処理
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 };

@@ -1,6 +1,7 @@
 //制作日：2023/07/09　制作者：トウ　処理内容：攻撃の時、色んな便利な処理を行う
 //制作日：2023/07/09　制作者：トウ　更新内容：Characterが特定のActorに角度（向き）を修正する処理を追加
 //制作日：2023/07/09　制作者：トウ　更新内容：プレイヤーが敵を攻撃した際にHitStop処理を追加
+//制作日：2023/07/09　制作者：トウ　更新内容：プレイヤーが敵を攻撃した際にEffect処理を追加
 #pragma once
 
 #include "CoreMinimal.h"
@@ -28,6 +29,9 @@ public:
 	//HitStopを行う
 	void HitStop(float _HitStopSpeed = -1.f);
 
+	//EffectをSpawnする
+	void HitEffect(class UNiagaraSystem* _NiagaraSystem, FVector _HitLocation, FVector _HitDirection);
+
 private:
 	/// 最も近い敵を選択する。
 	AActor* SelectNearestEnemy();
@@ -40,6 +44,16 @@ private:
 
 
 protected:
+	//機能のSwitch
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack Assist")
+		bool bUseCorrectAttackAngle = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack Assist")
+		bool bUseHitStop = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack Assist")
+		bool bUseHitEffect = true;
+
 	/// 敵を表すベースとなるアクタークラス。
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack Assist")
 		TSubclassOf<AActor> EnemyBaseClass;

@@ -84,21 +84,21 @@ void ABaseWeapon::EnemyOnOverlap(FHitResult& _HitResult)
 		}
 
 		Enemy->Damage(fDamage);						//敵にダメージを与える
-		FVector Center = _HitResult.Location;	//ヒットエフェクトの位置
+		FVector HitLocation = _HitResult.Location;		//ヒットエフェクトの位置
 
 		AActor* Player = GetOwner();			//プレイヤーのヒットストップ処理
 		if (Player) {
 			ADestinyChangerCharacter* DestinyChangerCharacter = Cast<ADestinyChangerCharacter>(Player);
 			if (DestinyChangerCharacter) {
 				DestinyChangerCharacter->GetAttackAssistComponent()->HitStop();
+				DestinyChangerCharacter->GetAttackAssistComponent()->HitEffect(HitEffect,HitLocation,GetActorForwardVector());
 			}
 		}
-
 		//Debug
 		FQuat Rotation = FQuat::Identity;
 		FVector Extent = FVector(5, 5, 5);
 
-		DrawDebugBox(GetWorld(), Center, Extent, Rotation, FColor::Green, false, 5.0f, 0, 1.0f);
+		//DrawDebugBox(GetWorld(), HitLocation, Extent, Rotation, FColor::Green, false, 5.0f, 0, 1.0f);
 		//Enemyの名前とHPをPrintStringで表示
 		FString OutputString = FString::Printf(TEXT("Enemy: %s, Health: %f"), *Enemy->GetName(), Enemy->GetHP());
 		UKismetSystemLibrary::PrintString(this, OutputString);

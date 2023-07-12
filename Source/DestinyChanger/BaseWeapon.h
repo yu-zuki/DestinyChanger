@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 		class UCapsuleComponent* WeaponCollision;	//•Ší‚Ì“–‚½‚è”»’è
 
+	//Niagara Effect
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+		class UNiagaraSystem* HitEffect;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")

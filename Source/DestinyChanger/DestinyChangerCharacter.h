@@ -157,5 +157,19 @@ protected:
 
 public:
 	UAttackAssistComponent* GetAttackAssistComponent() const;
+
+//////////////
+//EnemyDirectionIndicator
+public:
+	void ShowEnemyDirectionIndicator(AActor* _Target);
+	UArrowComponent* GetEnemyDirectionIndicator() const;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		TSubclassOf<class UEnemyTargeting> EnemyTargeting_UMG;	// プレイヤーのメイン武器のクラス
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UArrowComponent* EnemyDirectionIndicator;
+
 };
 

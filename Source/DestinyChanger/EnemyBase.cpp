@@ -9,6 +9,8 @@
 #include "Components/ArrowComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DestinyChangerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 
 //ADestinyChangerGameMode* AEnemyBase::GameMode = nullptr;	//初期化
@@ -48,7 +50,13 @@ void AEnemyBase::BeginPlay()
 
 	//Bind 攻撃受けれる前（プレイヤーの攻撃アニメーションがPlayしたら）に　bIsAttacked　をfalseにする
 	GetGameMode()->AttackEndEventBind(this, &AEnemyBase::ResetIsAttacked);
-	
+
+
+	//Debug GetPlayerCharacter
+	ADestinyChangerCharacter* PlayerCharacter = Cast< ADestinyChangerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if(PlayerCharacter)	{
+		PlayerCharacter->ShowEnemyDirectionIndicator(this);
+	}
 }
 
 void AEnemyBase::BeginDestroy()

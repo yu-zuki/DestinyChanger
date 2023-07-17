@@ -9,6 +9,11 @@
 #include "Components/ArrowComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DestinyChangerCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/WidgetComponent.h"
+#include "CharacterBase_UMG.h"
+#include "Base_WidgetComponent.h"
 
 
 //ADestinyChangerGameMode* AEnemyBase::GameMode = nullptr;	//初期化
@@ -17,6 +22,7 @@
 AEnemyBase::AEnemyBase()
 	:HP(100.f), MaxHP(100.f), bIsAttacked(false)
 {
+	PrimaryActorTick.bCanEverTick = true;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -37,8 +43,9 @@ AEnemyBase::AEnemyBase()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
- //	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//PrimaryActorTick.bCanEverTick = true;
+	//UI Create
+	EnemyWidget = CreateDefaultSubobject<UBase_WidgetComponent>(TEXT("EnemyWidget"));
+	EnemyWidget->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -46,9 +53,20 @@ void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	StartLocation = GetActorLocation();	//初期位置を保存
+
 	//Bind 攻撃受けれる前（プレイヤーの攻撃アニメーションがPlayしたら）に　bIsAttacked　をfalseにする
 	GetGameMode()->AttackEndEventBind(this, &AEnemyBase::ResetIsAttacked);
-	
+
+
+	//Debug GetPlayerCharacter
+	ADestinyChangerCharacter* PlayerCharacter = Cast< ADestinyChangerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if(PlayerCharacter)	{
+		EnemyDirectionIndicator = PlayerCharacter->ShowEnemyDirectionIndicator(this);
+	}
+
+	//HPUI Set Class
+
 }
 
 void AEnemyBase::BeginDestroy()
@@ -57,7 +75,14 @@ void AEnemyBase::BeginDestroy()
 	Super::BeginDestroy();
 
 	//GetGameMode()->AttackEndEventUnBind(this, &AEnemyBase::ResetIsAttacked);
-	//UnBind
+}
+
+void AEnemyBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	//Enemy Hp Set
+	EnemyWidget->SetHPInfo(HP, MaxHP);
 }
 
 // Called to bind functionality to input
@@ -65,6 +90,11 @@ void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	//Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemyBase::Destroyed()
+{
+	Super::Destroyed();
 }
 
 void AEnemyBase::Damage(float Damage)
@@ -94,6 +124,12 @@ void AEnemyBase::Heal(float Heal)
 
 void AEnemyBase::Death()
 {
+
+	if (EnemyDirectionIndicator) {
+		EnemyDirectionIndicator->RemoveFromParent();
+		EnemyDirectionIndicator->MarkAsGarbage();
+	}
+
 	Destroy();
 }
 

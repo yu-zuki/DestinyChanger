@@ -261,7 +261,7 @@ UAttackAssistComponent* ADestinyChangerCharacter::GetAttackAssistComponent() con
 
 //////////////////////////////////////////////////////////////////////////
 // Show Enemy Targeting
-void ADestinyChangerCharacter::ShowEnemyDirectionIndicator(AActor* _Target)
+UUserWidget* ADestinyChangerCharacter::ShowEnemyDirectionIndicator(AActor* _Target)
 {
 	//Create Widget
 	if (EnemyTargeting_UMG) {
@@ -272,7 +272,11 @@ void ADestinyChangerCharacter::ShowEnemyDirectionIndicator(AActor* _Target)
 
 		//Add to Viewport
 		tmp_UMG->AddToViewport();
+
+		return tmp_UMG;
 	}
+
+	return nullptr;
 }
 
 UArrowComponent* ADestinyChangerCharacter::GetEnemyDirectionIndicator() const

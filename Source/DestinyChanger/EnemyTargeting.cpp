@@ -45,7 +45,7 @@ FRotator UEnemyTargeting::GetLookAtRotationYaw()
 	Direction *= -1;						//”½“]
 
 	Direction.Normalize(0.0001);
-	float EnemyYaw = Direction.Rotation().Yaw;			//
+	float EnemyYaw = Direction.Rotation().Yaw;			// 
 
 	//-------------------------------Player-----------------------------------------
 	auto tmp = PlayerArrow->GetForwardVector();

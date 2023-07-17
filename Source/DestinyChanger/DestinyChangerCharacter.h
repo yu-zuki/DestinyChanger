@@ -161,7 +161,7 @@ public:
 //////////////
 //EnemyDirectionIndicator
 public:
-	void ShowEnemyDirectionIndicator(AActor* _Target);
+	class UUserWidget* ShowEnemyDirectionIndicator(AActor * _Target);
 	UArrowComponent* GetEnemyDirectionIndicator() const;
 
 protected:

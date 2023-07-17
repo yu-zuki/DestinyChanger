@@ -27,17 +27,19 @@ protected:
 
 	virtual void BeginDestroy() override;
 
+	//tick
+	virtual void Tick(float DeltaTime) override;
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
+	virtual void Destroyed() override;
 
+//////////
+///Anime
 protected:
-	//AnimMontage Attacked
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* AttackedAnimMontage;
-
-
 
 //////////
 ///HP
@@ -68,6 +70,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HP")
 		float GetHP() { return HP; }
 
+//////////////////////////////////////////////////////////////////////////
+///UI
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+		class UBase_WidgetComponent* EnemyWidget;
+
+		class UUserWidget* EnemyDirectionIndicator;		//Enemy‚Ì•ûŒü‚ğ¦‚·UI
+
+//////////////////////////////////////////////////////////////////////////
+///AI
+public:
+
+	FVector StartLocation;		//‰ŠúˆÊ’u
+
+
+//////////
+///æ“¾
 protected:
 	inline class ADestinyChangerGameMode* GetGameMode();
 public:

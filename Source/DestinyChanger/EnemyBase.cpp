@@ -104,6 +104,7 @@ void AEnemyBase::Damage(float Damage)
 
 	if(AttackedAnimMontage)		//攻撃アニメーションがあるときはそれを再生
 		PlayAnimMontage(AttackedAnimMontage);
+	
 
 	//HitStop
 

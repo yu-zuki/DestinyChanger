@@ -1,27 +1,25 @@
-//制作日：2023/07/18　制作者：トウ　処理内容：プレイヤーに追うのTask
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "MoveToPlayerBT.generated.h"
+#include "MoveToStartPos.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DESTINYCHANGER_API UMoveToPlayerBT : public UBTTaskNode
+class DESTINYCHANGER_API UMoveToStartPos : public UBTTaskNode
 {
 	GENERATED_BODY()
-	
+
 public:
-	UMoveToPlayerBT();
+	UMoveToStartPos();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
-	//最大の移動の範囲
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RandomMove")
-		float fMaxMoveRange = 4000.0f;
+	
 };

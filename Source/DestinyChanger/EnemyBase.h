@@ -37,9 +37,19 @@ protected:
 
 //////////
 ///Anime
-protected:
+public:
+
+	//ダメージ受けた時のアニメーション
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* AttackedAnimMontage;
+
+	//死亡時のアニメーション
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* DeathAnimMontage;
+
+	//攻撃時のアニメーション
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AttackAnimMontage;
 
 //////////
 ///HP

@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//制作日：2023/07/20　制作者：トウ　処理内容：敵の待機状態のTask
 #pragma once
 
 #include "CoreMinimal.h"

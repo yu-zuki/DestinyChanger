@@ -170,6 +170,28 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UArrowComponent* EnemyDirectionIndicator;
+//////////////
+//ダメージ受け処理
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AnimMontage_TakeDamage;	// ダメージを受けるモーション
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AnimMontage_Death;		// 死亡モーション
 
+	void TakePlayerDamage(float _Damage);	// ダメージを受ける
+
+	bool bIsInvincible;							// 無敵状態かどうか
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float InvincibleTime;						// 無敵状態の時間
+
+	void InvincibleFlagReset();					// 無敵状態を解除する
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float HP;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float MaxHP;
+
+	void Death();
 };
 

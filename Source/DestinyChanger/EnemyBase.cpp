@@ -46,6 +46,10 @@ AEnemyBase::AEnemyBase()
 	//UI Create
 	EnemyWidget = CreateDefaultSubobject<UBase_WidgetComponent>(TEXT("EnemyWidget"));
 	EnemyWidget->SetupAttachment(RootComponent);
+
+	//AttackCollision Create
+	AttackCollisionComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
+	AttackCollisionComponent->SetupAttachment(GetMesh(), FName("AttackCollisionSocket"));
 }
 
 // Called when the game starts or when spawned
@@ -155,6 +159,46 @@ void AEnemyBase::ResetIsAttacked()
 	}
 }
 
+void AEnemyBase::HitDecect()
+{
+	if (AttackCollisionComponent)
+		CheckOverlap(AttackCollisionComponent);
+	else
+		UE_LOG(LogTemp, Warning, TEXT("AttackCollision is nullptr"));
+}
+
+void AEnemyBase::CheckOverlap(UCapsuleComponent* _AttackCollision)
+{
+	TArray<FHitResult> HitResults;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+
+	FVector Start = _AttackCollision->GetComponentLocation();
+	FVector End = Start;// + GetActorForwardVector() * 100.0f;
+	FQuat Rot = _AttackCollision->GetComponentQuat();			// 
+	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(_AttackCollision->GetScaledCapsuleRadius(), _AttackCollision->GetScaledCapsuleHalfHeight());
+
+	//衝突Actorを取得
+	GetWorld()->SweepMultiByChannel(HitResults, Start, End, Rot, ECollisionChannel::ECC_GameTraceChannel2, CollisionShape, CollisionParams);
+
+	//Debug
+	if (true) {
+		DrawDebugCapsule(GetWorld(), (Start + End) / 2,
+			CollisionShape.GetCapsuleHalfHeight(),
+			CollisionShape.GetCapsuleRadius(), Rot, FColor::Red, false, 5.0f, 0, 1.0f);
+	}
+
+	//衝突Actorにダメージを与える
+	for (FHitResult HitResult : HitResults) {
+		ADestinyChangerCharacter* tmp_Player = Cast<ADestinyChangerCharacter>(HitResult.GetActor());
+
+		//Playerにダメージを与える
+		if (tmp_Player) {
+			tmp_Player->TakePlayerDamage(AttackDamage);
+		}
+	}
+}
+
 inline ADestinyChangerGameMode* AEnemyBase::GetGameMode()
 {
 	//キャシュー
@@ -162,7 +206,7 @@ inline ADestinyChangerGameMode* AEnemyBase::GetGameMode()
 		//GameModeを取得
 		GameMode = Cast<ADestinyChangerGameMode>(GetWorld()->GetAuthGameMode());
 		if (GameMode == nullptr)		{
-			UE_LOG(LogTemp, Warning, TEXT("GameModeが取得できませんでした"));
+			UE_LOG(LogTemp, Error, TEXT("GameModeが取得できませんでした"));
 			return nullptr;
 		}
 		return GameMode;

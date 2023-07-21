@@ -22,6 +22,7 @@
 // ADestinyChangerCharacter
 
 ADestinyChangerCharacter::ADestinyChangerCharacter()
+	:bIsInvincible(false), InvincibleTime(1.f), HP(100.f),MaxHP(100.f)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -282,6 +283,40 @@ UUserWidget* ADestinyChangerCharacter::ShowEnemyDirectionIndicator(AActor* _Targ
 UArrowComponent* ADestinyChangerCharacter::GetEnemyDirectionIndicator() const
 {
 	return EnemyDirectionIndicator;
+}
+
+void ADestinyChangerCharacter::TakePlayerDamage(float _Damage)
+{
+	if (bIsInvincible)	return;
+
+	HP -= _Damage;								//HP‚ğŒ¸‚ç‚·
+
+	PlayAnimMontage(AnimMontage_TakeDamage);	//AnimMontage‚ğÄ¶
+
+	//HP‚ª0ˆÈ‰º‚É‚È‚Á‚½‚ç€–S
+	if (HP <= 0) {
+		//€–Sˆ—
+		Death();
+		return;
+	}
+
+	//–³“Gó‘Ô‚É‚·‚é
+	bIsInvincible = true;
+
+	//ƒ^ƒCƒ}[‚Å–³“Gó‘Ô‚ğ‰ğœ‚·‚é
+	FTimerHandle InvincibleFlagResetTimerHandle;
+	GetWorldTimerManager().SetTimer(InvincibleFlagResetTimerHandle, this, &ADestinyChangerCharacter::InvincibleFlagReset, InvincibleTime);
+}
+
+void ADestinyChangerCharacter::InvincibleFlagReset()
+{
+	bIsInvincible = false;
+}
+
+void ADestinyChangerCharacter::Death()
+{
+	//€–Sˆ—
+	PlayAnimMontage(AnimMontage_Death);
 }
 
 

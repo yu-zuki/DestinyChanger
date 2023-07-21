@@ -24,6 +24,8 @@ public:
 	//オーバーラップイベント
 	//void OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor) override;
 
+public:
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 		float fDamage = 10.0f;	//ダメージ
@@ -63,4 +65,7 @@ public:
 	void CheckOverlap();	//オーバーラップをチェックする
 	void EnemyOnOverlap(struct FHitResult& _HitResult);	//敵とOverrap時の処理
 	void EnemyOnOverlap(class AActor* EnemyActor,FVector HitLocation);	//敵とOverrap時の処理
+
+	//ダメージの倍率を一時的に変更する
+	void SetDamageRatio(float _DamageRatio = 2.f);
 };

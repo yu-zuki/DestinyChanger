@@ -78,6 +78,8 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
+	virtual void Tick(float DeltaTime) override;
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -170,6 +172,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UArrowComponent* EnemyDirectionIndicator;
+
 //////////////
 //ダメージ受け処理
 public:
@@ -193,5 +196,53 @@ protected:
 		float MaxHP;
 
 	void Death();
+
+	//％を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetHPPercent() { return HP / MaxHP;}
+
+//////////////////////////////////////////////////////////////////////////
+//防御処理
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		bool bIsGuarding = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UInputAction* GuardAction;
+
+	void OnGuard(const FInputActionValue& Value);
+	void OffGuard(const FInputActionValue& Value);
+
+	void GuradFlagReset(float _DeltaTime);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float fGuardGauge;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float fMaxGuardGauge;
+
+	//CD
+	bool bIsGuardGaugeCountDown;
+
+	void GuardGaugeCountUp(float _CompensationFactor);
+	void GuardGaugeCountDown(float _CompensationFactor);
+	
+	//％を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetGuardGaugePercent();
+
+	// 防御中Hitモーション
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AnimMontage_GuardHit;		
+
+	UFUNCTION(BlueprintCallable)
+		void StartParticleSystem();
+
+	UFUNCTION(BlueprintCallable)
+		void StopParticleSystem();
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UNiagaraComponent* GuardEffectCom;
+
+
 };
 

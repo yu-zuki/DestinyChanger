@@ -104,6 +104,7 @@ public:
 	virtual void HitDecect();
 
 	virtual void CheckOverlap(class UCapsuleComponent* _AttackCollision);
+
 //////////
 ///Žæ“¾
 protected:

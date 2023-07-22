@@ -2,6 +2,11 @@
 //制作日：2023/07/08　制作者：トウ　更新内容：攻撃モーションの追加
 //更新日：2023/07/09　更新者：トウ　更新内容：攻撃コンボの追加
 //更新日：2023/07/09　更新者：トウ　更新内容：回避アクションの追加
+//更新日：2023/07/13　更新者：トウ　更新内容：ダメージ受け処理の追加
+//更新日：2023/07/14　更新者：トウ　更新内容：エネミーの方向を示すコンポーネントの追加
+//更新日：2023/07/21　更新者：トウ　更新内容：防御処理の追加
+//更新日：2023/07/22　更新者：トウ　更新内容：UIの追加
+//更新日：2023/07/23　更新者：トウ　更新内容：DestinySystemの追加
 
 
 #pragma once
@@ -196,11 +201,6 @@ protected:
 		float MaxHP;
 
 	void Death();
-
-	//％を取得
-	UFUNCTION(BlueprintCallable, Category = "UI")
-		float GetHPPercent() { return HP / MaxHP;}
-
 //////////////////////////////////////////////////////////////////////////
 //防御処理
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
@@ -225,9 +225,6 @@ protected:
 	void GuardGaugeCountUp(float _CompensationFactor);
 	void GuardGaugeCountDown(float _CompensationFactor);
 	
-	//％を取得
-	UFUNCTION(BlueprintCallable, Category = "UI")
-		float GetGuardGaugePercent();
 
 	// 防御中Hitモーション
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
@@ -238,6 +235,53 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 		void StopParticleSystem();
+
+//////////////////////////////////////////////////////////////////////////
+//DestinySystem
+protected:
+	//DestinySystem一回起動すると増える時間
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DestinySystem", meta = (AllowPrivateAccess = "true"))
+		float fDestinySystemAddTime;
+	
+	//DestinySystemの最大時間
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DestinySystem", meta = (AllowPrivateAccess = "true"))
+		float fDestinySystemTimeMax;
+
+	//DestinySystemが一回発動
+	void ExecuteDestinySystem();
+
+	//タイマーに設定する時間
+	float fDestinySystemTimerLength = 0.f;
+
+	//タイマーに設定する時間を増やす
+	void AddDestinySystemTimerLength();
+
+	//TimerHandle
+	FTimerHandle DestinySystemTimerHandle;
+
+	//AttackPowerReset
+	void AttackPowerReset();
+
+	//Create AttackPowerReset Timer
+	void CreateAttackPowerResetTimer();
+
+//////////////////////////////////////////////////////////////////////////
+//UI
+	//％を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetHPPercent() { return HP / MaxHP; }
+
+	//％を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetGuardGaugePercent();
+
+	//攻撃力を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetAttackPower();
+
+	//DestinySystemの残り時間を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetDestinySystemTime();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))

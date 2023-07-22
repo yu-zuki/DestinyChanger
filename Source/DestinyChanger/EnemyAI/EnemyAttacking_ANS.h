@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//更新日：2023/07/21　更新者：トウ　更新内容：敵の攻撃中の通知
 
 #pragma once
 

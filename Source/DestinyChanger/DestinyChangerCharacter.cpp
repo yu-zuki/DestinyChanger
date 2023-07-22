@@ -23,7 +23,9 @@
 // ADestinyChangerCharacter
 
 ADestinyChangerCharacter::ADestinyChangerCharacter()
-	:bIsInvincible(false), InvincibleTime(1.f), HP(100.f),MaxHP(100.f),fGuardGauge(120.f),fMaxGuardGauge(120.f)
+	:bIsInvincible(false), InvincibleTime(1.f), HP(100.f),MaxHP(100.f),
+	 fGuardGauge(120.f), fMaxGuardGauge(120.f),
+	 fDestinySystemAddTime(5.f), fDestinySystemTimeMax(15.f), fDestinySystemTimerLength(0.f)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -307,14 +309,14 @@ void ADestinyChangerCharacter::TakePlayerDamage(float _Damage)
 	//–³“Gó‘Ô‚È‚çˆ—‚ğs‚í‚È‚¢
 	if (bIsInvincible)	return;
 
-	//ƒK[ƒh’†‚Ìˆ—
+	//ƒK[ƒh’†‚Ìê‡DestinySystem‚ğ”­“®
 	if (bIsGuarding) {
-		//UŒ‚—Í‚ğ2”{‚É‚·‚é
-		MainWeapon->SetDamageRatio();
+
+		ExecuteDestinySystem();							//DestinySystem‚ğ”­“®
 
 		PlayAnimMontage(AnimMontage_GuardHit);			//ƒK[ƒhHitƒAƒjƒ[ƒVƒ‡ƒ“‚ğÄ¶
 
-		//Effect‚ğ’â~@CD‚É“ü‚é
+		//Effect‚ğ’â~@ƒK[ƒh‚ÌCD‚É“ü‚é
 		StopParticleSystem();
 		bIsGuardGaugeCountDown = true;
 
@@ -351,6 +353,16 @@ void ADestinyChangerCharacter::Death()
 	PlayAnimMontage(AnimMontage_Death);
 }
 
+float ADestinyChangerCharacter::GetAttackPower()
+{
+	return MainWeapon->GetAttackPower();
+}
+
+float ADestinyChangerCharacter::GetDestinySystemTime()
+{
+	return GetWorld()->GetTimerManager().GetTimerRemaining(DestinySystemTimerHandle);
+}
+
 void ADestinyChangerCharacter::OnGuard(const FInputActionValue& Value)
 {
 	//CD’†
@@ -376,7 +388,6 @@ void ADestinyChangerCharacter::GuradFlagReset(float _DeltaTime)
 
 	//•â³ŒW”
 	float CompensationFactor = _DeltaTime / IdealDeltaTime;
-
 
 	if (bIsGuarding) {
 		//ƒK[ƒh’†‚Ìê‡‚ÍƒK[ƒhƒQ[ƒW‚ğŒ¸‚ç‚·
@@ -434,11 +445,9 @@ float ADestinyChangerCharacter::GetGuardGaugePercent()
 
 void ADestinyChangerCharacter::StartParticleSystem()
 {
-	if (GuardEffectCom && !GuardEffectCom->IsActive())
-	{
+	if (GuardEffectCom && !GuardEffectCom->IsActive())	{
 		GuardEffectCom->ActivateSystem();			//particle‚ğÄ¶
 
-		GuardEffectCom->SetHiddenInGame(false);		//component‚ğ•\¦
 	}
 }
 
@@ -447,9 +456,44 @@ void ADestinyChangerCharacter::StopParticleSystem()
 	if (GuardEffectCom && GuardEffectCom->IsActive())
 	{
 		GuardEffectCom->Deactivate();			//particle‚ğ’â~
-
-		GuardEffectCom->SetHiddenInGame(true);	//component‚ğ”ñ•\¦
 	}
+}
+
+void ADestinyChangerCharacter::ExecuteDestinySystem()
+{
+	//UŒ‚—Í‚ğ2”{‚É‚·‚é
+	MainWeapon->SetAttackPowerRatio();
+
+	//UŒ‚—Í‚ğ2”{‚É‚·‚éŠÔ‚ğŒv‘ª
+	CreateAttackPowerResetTimer();
+}
+
+void ADestinyChangerCharacter::AddDestinySystemTimerLength()
+{
+	//¡‚ÌŠÔ‚É’Ç‰Á‚·‚éŠÔ‚ğ‘«‚·
+	float tmp_NowTime = GetWorld()->GetTimerManager().GetTimerRemaining(DestinySystemTimerHandle);
+
+	fDestinySystemTimerLength = tmp_NowTime > 0.f ? tmp_NowTime + fDestinySystemAddTime : fDestinySystemAddTime;
+
+	if (fDestinySystemTimerLength > fDestinySystemTimeMax)
+		fDestinySystemTimerLength = fDestinySystemTimeMax;
+}
+
+void ADestinyChangerCharacter::AttackPowerReset()
+{
+	//UŒ‚—Í‚ğŒ³‚É–ß‚·
+	MainWeapon->ResetAttackPowerRatio();
+	fDestinySystemTimerLength = 0.f;
+
+	//ƒ^ƒCƒ}[‚ğƒŠƒZƒbƒg
+	GetWorldTimerManager().ClearTimer(DestinySystemTimerHandle);
+}
+
+void ADestinyChangerCharacter::CreateAttackPowerResetTimer()
+{
+	AddDestinySystemTimerLength();	//UŒ‚—Í‚ğ2”{‚É‚·‚éŠÔ‚ğŒv‘ª
+
+	GetWorldTimerManager().SetTimer(DestinySystemTimerHandle, this, &ADestinyChangerCharacter::AttackPowerReset, fDestinySystemTimerLength);
 }
 
 

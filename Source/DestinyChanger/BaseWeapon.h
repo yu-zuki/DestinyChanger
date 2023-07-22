@@ -28,7 +28,9 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-		float fDamage = 10.0f;	//ダメージ
+		float fAttackPower = 10.0f;	//ダメージ
+
+	float fDefaultAttackPower = 0.f;	//デフォルトのダメージ
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 		FName HandSocketName;	//装備時のアタッチ先
@@ -66,6 +68,12 @@ public:
 	void EnemyOnOverlap(struct FHitResult& _HitResult);	//敵とOverrap時の処理
 	void EnemyOnOverlap(class AActor* EnemyActor,FVector HitLocation);	//敵とOverrap時の処理
 
-	//ダメージの倍率を一時的に変更する
-	void SetDamageRatio(float _DamageRatio = 2.f);
+	//攻撃力の倍率を一時的に変更する
+	void SetAttackPowerRatio(float _DamageRatio = 2.f);
+
+	//攻撃力の倍率を元に戻す
+	void ResetAttackPowerRatio(){ fAttackPower = fDefaultAttackPower; }
+
+	//攻撃力を取得する
+	float GetAttackPower() const { return fAttackPower; }
 };

@@ -8,7 +8,7 @@
 
 void UCharacterBase_UMG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
-Super::NativeTick(MyGeometry, InDeltaTime);
+	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	if (HealthBar)
 	{

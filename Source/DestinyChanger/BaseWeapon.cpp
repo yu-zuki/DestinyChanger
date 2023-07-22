@@ -22,6 +22,9 @@ ABaseWeapon::ABaseWeapon()
 void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//値の初期化
+	fDefaultAttackPower = fAttackPower;
 }
 
 void ABaseWeapon::AttachToHand()
@@ -83,7 +86,7 @@ void ABaseWeapon::EnemyOnOverlap(FHitResult& _HitResult)
 			return;
 		}
 
-		Enemy->Damage(fDamage);						//敵にダメージを与える
+		Enemy->Damage(fAttackPower);							//敵にダメージを与える
 		FVector HitLocation = _HitResult.Location;		//ヒットエフェクトの位置
 
 		AActor* Player = GetOwner();			//プレイヤーのヒットストップ処理
@@ -130,4 +133,22 @@ void ABaseWeapon::EnemyOnOverlap(AActor* EnemyActor,FVector HitLocation)
 		FString OutputString = FString::Printf(TEXT("Enemy: %s, Health: %f"), *Enemy->GetName(), Enemy->GetHP());
 		UKismetSystemLibrary::PrintString(this, OutputString);
 	}
+}
+
+void ABaseWeapon::SetAttackPowerRatio(float _DamageRatio)
+{
+	fAttackPower = fAttackPower * _DamageRatio;
+
+	//0未満になったら
+	if (fAttackPower < 0) {
+		fAttackPower = 0;
+	}
+	//floatの限界を超えたら
+	else if (fAttackPower > std::numeric_limits<float>::max()) {
+		fAttackPower = std::numeric_limits<float>::max();
+	}
+
+	//Debug
+	FString OutputString = FString::Printf(TEXT("Damage: %f"), fAttackPower);
+	UKismetSystemLibrary::PrintString(this, OutputString);
 }

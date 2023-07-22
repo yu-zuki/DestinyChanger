@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//更新日：2023/07/17　更新者：トウ　更新内容：ベースの敵キャラクターのUIClassの追加
 #pragma once
 
 #include "CoreMinimal.h"

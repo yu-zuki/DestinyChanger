@@ -1,5 +1,6 @@
 //制作日：2023/07/08　制作者：トウ　処理内容：敵の処理
 //制作日：2023/07/08　制作者：トウ　更新内容：敵の基本処理
+//更新日：2023/07/19　更新者：トウ　更新内容：敵の攻撃処理の追加
 
 #pragma once
 
@@ -37,9 +38,19 @@ protected:
 
 //////////
 ///Anime
-protected:
+public:
+
+	//ダメージ受けた時のアニメーション
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
 		class UAnimMontage* AttackedAnimMontage;
+
+	//死亡時のアニメーション
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* DeathAnimMontage;
+
+	//攻撃時のアニメーション
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AttackAnimMontage;
 
 //////////
 ///HP
@@ -84,6 +95,16 @@ public:
 
 	FVector StartLocation;		//初期位置
 
+//////////////////////////////////////////////////////////////////////////
+///攻撃
+	float AttackDamage = 10.0f;		//攻撃力
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+		class UCapsuleComponent* AttackCollisionComponent;	//攻撃の当たり判定
+
+	virtual void HitDecect();
+
+	virtual void CheckOverlap(class UCapsuleComponent* _AttackCollision);
 
 //////////
 ///取得

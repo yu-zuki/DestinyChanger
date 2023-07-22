@@ -46,7 +46,7 @@ void URandomMoveBT::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemor
 		//Stateをプレイヤーを追いかける状態に変更
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("EnemyState", (uint8)EEnemyState::Chase);
 
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);	//タスクを終了
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);	//タスクを終了
 		return;
 	}
 

@@ -16,12 +16,16 @@
 #include "BaseWeapon.h"
 #include "EnemyTargeting.h"
 #include "Components/ArrowComponent.h"
+#include "NiagaraComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 // ADestinyChangerCharacter
 
 ADestinyChangerCharacter::ADestinyChangerCharacter()
+	:bIsInvincible(false), InvincibleTime(1.f), HP(100.f),MaxHP(100.f),
+	 fGuardGauge(120.f), fMaxGuardGauge(120.f),
+	 fDestinySystemAddTime(5.f), fDestinySystemTimeMax(15.f), fDestinySystemTimerLength(0.f)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -60,6 +64,11 @@ ADestinyChangerCharacter::ADestinyChangerCharacter()
 	//Player Attack Assist Component
 	FreeformRollComponent = CreateDefaultSubobject<UFreeformRollComponent>(TEXT("FreeformRoll"));
 	AttackAssistComponent = CreateDefaultSubobject<UAttackAssistComponent>(TEXT("AttackAssist"));
+
+	//GuardEffectCom
+	GuardEffectCom = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
+	GuardEffectCom->SetupAttachment(RootComponent);
+
 }
 
 void ADestinyChangerCharacter::BeginPlay()
@@ -88,6 +97,13 @@ void ADestinyChangerCharacter::BeginPlay()
 			MainWeapon->OnEquipped();
 		}
 	}
+}
+
+void ADestinyChangerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	GuradFlagReset(DeltaTime);
 }
 
 void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
@@ -198,6 +214,10 @@ void ADestinyChangerCharacter::SetupPlayerInputComponent(class UInputComponent* 
 		EnhancedInputComponent->BindAction(ToggleCombatAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::ToggleCombat);
 
 		EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::Roll);
+
+		//Guarding
+		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Triggered, this, &ADestinyChangerCharacter::OnGuard);
+		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Completed, this, &ADestinyChangerCharacter::OffGuard);
 	}
 
 }
@@ -282,6 +302,198 @@ UUserWidget* ADestinyChangerCharacter::ShowEnemyDirectionIndicator(AActor* _Targ
 UArrowComponent* ADestinyChangerCharacter::GetEnemyDirectionIndicator() const
 {
 	return EnemyDirectionIndicator;
+}
+
+void ADestinyChangerCharacter::TakePlayerDamage(float _Damage)
+{
+	//無敵状態なら処理を行わない
+	if (bIsInvincible)	return;
+
+	//ガード中の場合DestinySystemを発動
+	if (bIsGuarding) {
+
+		ExecuteDestinySystem();							//DestinySystemを発動
+
+		PlayAnimMontage(AnimMontage_GuardHit);			//ガードHitアニメーションを再生
+
+		//Effectを停止　ガードのCDに入る
+		StopParticleSystem();
+		bIsGuardGaugeCountDown = true;
+
+	}	//ガードしていない時の処理
+	else{
+		HP -= _Damage;									//HPを減らす
+
+		if(!bIsAttacking)
+			PlayAnimMontage(AnimMontage_TakeDamage);	//ダメージを受けた時のアニメーションを再生
+
+		//HPが0以下になったら死亡
+		if (HP <= 0) {
+			//死亡処理
+			Death();
+			return;
+		}
+	}
+
+	//無敵状態にする
+	bIsInvincible = true;
+	//タイマーで無敵状態を解除する
+	FTimerHandle InvincibleFlagResetTimerHandle;
+	GetWorldTimerManager().SetTimer(InvincibleFlagResetTimerHandle, this, &ADestinyChangerCharacter::InvincibleFlagReset, InvincibleTime);
+}
+
+void ADestinyChangerCharacter::InvincibleFlagReset()
+{
+	bIsInvincible = false;
+}
+
+void ADestinyChangerCharacter::Death()
+{
+	//死亡処理
+	PlayAnimMontage(AnimMontage_Death);
+}
+
+float ADestinyChangerCharacter::GetAttackPower()
+{
+	return MainWeapon->GetAttackPower();
+}
+
+float ADestinyChangerCharacter::GetDestinySystemTime()
+{
+	return GetWorld()->GetTimerManager().GetTimerRemaining(DestinySystemTimerHandle);
+}
+
+void ADestinyChangerCharacter::OnGuard(const FInputActionValue& Value)
+{
+	//CD中
+	if (bIsGuardGaugeCountDown){	
+		bIsGuarding = false;
+		return;
+	}
+
+	//ガード状態にする
+	bIsGuarding = true; 
+}
+
+void ADestinyChangerCharacter::OffGuard(const FInputActionValue& Value)
+{
+	//ガード状態を解除する
+	bIsGuarding = false;
+}
+
+void ADestinyChangerCharacter::GuradFlagReset(float _DeltaTime)
+{
+	//1フレームの理想時間
+	float IdealDeltaTime = 1.f / 60.f;
+
+	//補正係数
+	float CompensationFactor = _DeltaTime / IdealDeltaTime;
+
+	if (bIsGuarding) {
+		//ガード中の場合はガードゲージを減らす
+		GuardGaugeCountDown(CompensationFactor);
+
+		//ガード中は移動できないようにする
+		GetCharacterMovement()->MaxWalkSpeed = 0.f;
+		GetCharacterMovement()->MaxAcceleration = 400.f;
+
+		//Effectを再生
+		StartParticleSystem();
+	}
+	else {
+		//ガード中でない場合はガードゲージを増やす
+		GuardGaugeCountUp(CompensationFactor);
+
+		//ガード中でない場合は移動できるようにする
+		GetCharacterMovement()->MaxWalkSpeed = 800.f;
+		GetCharacterMovement()->MaxAcceleration = 1500.f;
+
+		//Effectを停止
+		StopParticleSystem();
+	}
+}
+
+void ADestinyChangerCharacter::GuardGaugeCountUp(float _CompensationFactor)
+{
+	//ガードゲージを増やす
+	fGuardGauge += 1.f * _CompensationFactor;
+
+	//ガードゲージが最大値を超えたら最大値にする
+	if (fGuardGauge > fMaxGuardGauge) {
+		fGuardGauge = fMaxGuardGauge;
+
+		bIsGuardGaugeCountDown = false;
+	}
+}
+
+void ADestinyChangerCharacter::GuardGaugeCountDown(float _CompensationFactor)
+{
+	fGuardGauge -= 2.f * _CompensationFactor;
+
+	//ガードゲージが0以下になったら0にする
+	if (fGuardGauge < 0.f) {
+		fGuardGauge = 0.f;
+
+		bIsGuardGaugeCountDown = true;
+	}
+}
+
+float ADestinyChangerCharacter::GetGuardGaugePercent()
+{
+	return fGuardGauge / fMaxGuardGauge;
+}
+
+void ADestinyChangerCharacter::StartParticleSystem()
+{
+	if (GuardEffectCom && !GuardEffectCom->IsActive())	{
+		GuardEffectCom->ActivateSystem();			//particleを再生
+
+	}
+}
+
+void ADestinyChangerCharacter::StopParticleSystem()
+{
+	if (GuardEffectCom && GuardEffectCom->IsActive())
+	{
+		GuardEffectCom->Deactivate();			//particleを停止
+	}
+}
+
+void ADestinyChangerCharacter::ExecuteDestinySystem()
+{
+	//攻撃力を2倍にする
+	MainWeapon->SetAttackPowerRatio();
+
+	//攻撃力を2倍にする時間を計測
+	CreateAttackPowerResetTimer();
+}
+
+void ADestinyChangerCharacter::AddDestinySystemTimerLength()
+{
+	//今の時間に追加する時間を足す
+	float tmp_NowTime = GetWorld()->GetTimerManager().GetTimerRemaining(DestinySystemTimerHandle);
+
+	fDestinySystemTimerLength = tmp_NowTime > 0.f ? tmp_NowTime + fDestinySystemAddTime : fDestinySystemAddTime;
+
+	if (fDestinySystemTimerLength > fDestinySystemTimeMax)
+		fDestinySystemTimerLength = fDestinySystemTimeMax;
+}
+
+void ADestinyChangerCharacter::AttackPowerReset()
+{
+	//攻撃力を元に戻す
+	MainWeapon->ResetAttackPowerRatio();
+	fDestinySystemTimerLength = 0.f;
+
+	//タイマーをリセット
+	GetWorldTimerManager().ClearTimer(DestinySystemTimerHandle);
+}
+
+void ADestinyChangerCharacter::CreateAttackPowerResetTimer()
+{
+	AddDestinySystemTimerLength();	//攻撃力を2倍にする時間を計測
+
+	GetWorldTimerManager().SetTimer(DestinySystemTimerHandle, this, &ADestinyChangerCharacter::AttackPowerReset, fDestinySystemTimerLength);
 }
 
 

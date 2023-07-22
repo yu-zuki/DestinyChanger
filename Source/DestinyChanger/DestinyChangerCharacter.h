@@ -2,6 +2,11 @@
 //制作日：2023/07/08　制作者：トウ　更新内容：攻撃モーションの追加
 //更新日：2023/07/09　更新者：トウ　更新内容：攻撃コンボの追加
 //更新日：2023/07/09　更新者：トウ　更新内容：回避アクションの追加
+//更新日：2023/07/13　更新者：トウ　更新内容：ダメージ受け処理の追加
+//更新日：2023/07/14　更新者：トウ　更新内容：エネミーの方向を示すコンポーネントの追加
+//更新日：2023/07/21　更新者：トウ　更新内容：防御処理の追加
+//更新日：2023/07/22　更新者：トウ　更新内容：UIの追加
+//更新日：2023/07/23　更新者：トウ　更新内容：DestinySystemの追加
 
 
 #pragma once
@@ -77,6 +82,8 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+	virtual void Tick(float DeltaTime) override;
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -170,6 +177,116 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UArrowComponent* EnemyDirectionIndicator;
+
+//////////////
+//ダメージ受け処理
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AnimMontage_TakeDamage;	// ダメージを受けるモーション
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AnimMontage_Death;		// 死亡モーション
+
+	void TakePlayerDamage(float _Damage);	// ダメージを受ける
+
+	bool bIsInvincible;							// 無敵状態かどうか
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float InvincibleTime;						// 無敵状態の時間
+
+	void InvincibleFlagReset();					// 無敵状態を解除する
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float HP;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float MaxHP;
+
+	void Death();
+//////////////////////////////////////////////////////////////////////////
+//防御処理
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		bool bIsGuarding = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UInputAction* GuardAction;
+
+	void OnGuard(const FInputActionValue& Value);
+	void OffGuard(const FInputActionValue& Value);
+
+	void GuradFlagReset(float _DeltaTime);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float fGuardGauge;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		float fMaxGuardGauge;
+
+	//CD
+	bool bIsGuardGaugeCountDown;
+
+	void GuardGaugeCountUp(float _CompensationFactor);
+	void GuardGaugeCountDown(float _CompensationFactor);
+	
+
+	// 防御中Hitモーション
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UAnimMontage* AnimMontage_GuardHit;		
+
+	UFUNCTION(BlueprintCallable)
+		void StartParticleSystem();
+
+	UFUNCTION(BlueprintCallable)
+		void StopParticleSystem();
+
+//////////////////////////////////////////////////////////////////////////
+//DestinySystem
+protected:
+	//DestinySystem一回起動すると増える時間
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DestinySystem", meta = (AllowPrivateAccess = "true"))
+		float fDestinySystemAddTime;
+	
+	//DestinySystemの最大時間
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DestinySystem", meta = (AllowPrivateAccess = "true"))
+		float fDestinySystemTimeMax;
+
+	//DestinySystemが一回発動
+	void ExecuteDestinySystem();
+
+	//タイマーに設定する時間
+	float fDestinySystemTimerLength = 0.f;
+
+	//タイマーに設定する時間を増やす
+	void AddDestinySystemTimerLength();
+
+	//TimerHandle
+	FTimerHandle DestinySystemTimerHandle;
+
+	//AttackPowerReset
+	void AttackPowerReset();
+
+	//Create AttackPowerReset Timer
+	void CreateAttackPowerResetTimer();
+
+//////////////////////////////////////////////////////////////////////////
+//UI
+	//％を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetHPPercent() { return HP / MaxHP; }
+
+	//％を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetGuardGaugePercent();
+
+	//攻撃力を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetAttackPower();
+
+	//DestinySystemの残り時間を取得
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		float GetDestinySystemTime();
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
+		class UNiagaraComponent* GuardEffectCom;
+
 
 };
 

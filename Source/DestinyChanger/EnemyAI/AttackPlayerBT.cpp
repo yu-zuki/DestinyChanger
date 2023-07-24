@@ -22,6 +22,15 @@ EBTNodeResult::Type UAttackPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	if (Enemy == nullptr) 	return EBTNodeResult::Failed;
 	if (Enemy->AttackAnimMontage == nullptr) 	return EBTNodeResult::Failed;
 
+	//Playerの取得
+	APawn* Player =  GetWorld()->GetFirstPlayerController()->GetPawn() ;
+	if (Player == nullptr) 	return EBTNodeResult::Failed;
+
+	//敵の向きをプレイヤーの方向に向ける
+	FRotator NewRot = (Player->GetActorLocation() - Enemy->GetActorLocation()).Rotation();
+	NewRot.Pitch = 0.0f;
+	NewRot.Roll = 0.0f;
+	Enemy->SetActorRotation(NewRot);
 
 	//攻撃のアニメーションを再生
 	float tmp_TimeCount = Enemy->PlayAnimMontage(Enemy->AttackAnimMontage);

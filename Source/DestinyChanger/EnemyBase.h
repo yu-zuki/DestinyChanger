@@ -97,7 +97,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 ///UŒ‚
-	float AttackDamage = 10.0f;		//UŒ‚—Í
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+		float AttackDamage = 10.0f;		//UŒ‚—Í
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 		class UCapsuleComponent* AttackCollisionComponent;	//UŒ‚‚Ì“–‚½‚è”»’è

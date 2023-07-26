@@ -14,12 +14,13 @@ class DESTINYCHANGER_API UEnemyTaskBase_BT : public UBTTaskNode
 {
 	GENERATED_BODY()
 public:
+	UEnemyTaskBase_BT();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 protected:
-	class AEnemyBase* EnemyPtr = nullptr;
+	class AEnemyBase* EnemyPtr;
 
-	class AEnemyBase* GetEnemy(UBehaviorTreeComponent& OwnerComp);
+	inline class AEnemyBase* GetEnemy(UBehaviorTreeComponent& OwnerComp);
 };

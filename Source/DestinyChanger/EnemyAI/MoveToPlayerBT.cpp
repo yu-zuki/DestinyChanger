@@ -21,6 +21,9 @@ EBTNodeResult::Type UMoveToPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	AEnemyBase* Enemy = GetEnemy(OwnerComp);
 	if (Enemy == nullptr) return EBTNodeResult::Failed;
 
+	//Enemy‚Ì‚Æ‚±‚ë‚ðŽ¦‚·UI‚ð‰B‚·
+	GetEnemy(OwnerComp)->SetEnemyDirectionIndicatorActive(true);
+
 	// NavigationSystem‚ðŽæ“¾
 	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
 	if (NavSys == nullptr) return EBTNodeResult::Failed;

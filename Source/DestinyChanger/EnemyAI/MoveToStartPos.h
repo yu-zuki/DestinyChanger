@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "EnemyTaskBase_BT.h"
 #include "MoveToStartPos.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DESTINYCHANGER_API UMoveToStartPos : public UBTTaskNode
+class DESTINYCHANGER_API UMoveToStartPos : public UEnemyTaskBase_BT
 {
 	GENERATED_BODY()
 

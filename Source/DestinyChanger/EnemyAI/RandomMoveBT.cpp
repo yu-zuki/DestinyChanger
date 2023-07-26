@@ -22,6 +22,9 @@ EBTNodeResult::Type URandomMoveBT::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 	AEnemyBase* Enemy = GetEnemy(OwnerComp);
 	if (Enemy == nullptr) return EBTNodeResult::Failed;
 
+	//Enemyのところを示すUIを隠す
+	GetEnemy(OwnerComp)->SetEnemyDirectionIndicatorActive(false);
+
 	// NavigationSystemを取得
 	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
 	if (NavSys == nullptr) return EBTNodeResult::Failed;

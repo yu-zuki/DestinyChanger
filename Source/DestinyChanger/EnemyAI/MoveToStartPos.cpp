@@ -15,8 +15,11 @@ UMoveToStartPos::UMoveToStartPos()
 EBTNodeResult::Type UMoveToStartPos::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	// Enemy‚ðŽæ“¾
-	AEnemyBase* Enemy = Cast<AEnemyBase>(OwnerComp.GetAIOwner()->GetPawn());
+	AEnemyBase* Enemy = GetEnemy(OwnerComp);
 	if (Enemy == nullptr) return EBTNodeResult::Failed;
+	
+	//Enemy‚Ì‚Æ‚±‚ë‚ðŽ¦‚·UI‚ð‰B‚·
+	GetEnemy(OwnerComp)->SetEnemyDirectionIndicatorActive(false);
 
 	// MoveTo Start‚ÌˆÊ’u
 	OwnerComp.GetAIOwner()->MoveToLocation(Enemy->StartLocation,30);

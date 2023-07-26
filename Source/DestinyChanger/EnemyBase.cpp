@@ -162,6 +162,8 @@ void AEnemyBase::ResetIsAttacked()
 
 void AEnemyBase::SetEnemyDirectionIndicatorActive(bool bIsActive)
 {
+	//return;
+
 	bIsActive ?
 	EnemyDirectionIndicator->SetVisibility(ESlateVisibility::Visible) :
 	EnemyDirectionIndicator->SetVisibility(ESlateVisibility::Hidden);

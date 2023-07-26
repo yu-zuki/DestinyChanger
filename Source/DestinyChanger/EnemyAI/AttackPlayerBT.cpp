@@ -54,9 +54,6 @@ void UAttackPlayerBT::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 		//State‚ðƒvƒŒƒCƒ„[‚ðUŒ‚‚·‚éó‘Ô‚É•ÏX
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("EnemyState", (uint8)EEnemyState::Chase);
 
-		//Enemy‚Ì‚Æ‚±‚ë‚ðŽ¦‚·UI‚ð‰B‚·
-		GetEnemy(OwnerComp)->SetEnemyDirectionIndicatorActive(false);
-
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 }

@@ -18,7 +18,7 @@ UMoveToPlayerBT::UMoveToPlayerBT()
 EBTNodeResult::Type UMoveToPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	// Enemy‚ðŽæ“¾
-	AEnemyBase* Enemy = Cast<AEnemyBase>(OwnerComp.GetAIOwner()->GetPawn());
+	AEnemyBase* Enemy = GetEnemy(OwnerComp);
 	if (Enemy == nullptr) return EBTNodeResult::Failed;
 
 	// NavigationSystem‚ðŽæ“¾
@@ -33,7 +33,7 @@ EBTNodeResult::Type UMoveToPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 void UMoveToPlayerBT::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	// Enemy‚ðŽæ“¾
-	AEnemyBase* Enemy = Cast<AEnemyBase>(OwnerComp.GetAIOwner()->GetPawn());
+	AEnemyBase* Enemy = GetEnemy(OwnerComp);
 	
 	if (Enemy == nullptr) {
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);

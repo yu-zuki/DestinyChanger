@@ -17,7 +17,7 @@ EBTNodeResult::Type UAttackPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	bIsAttackEnd = false;
 
 	//敵の取得
-	AEnemyBase* Enemy = Cast<AEnemyBase>(OwnerComp.GetAIOwner()->GetPawn());
+	AEnemyBase* Enemy = GetEnemy(OwnerComp);
 
 	if (Enemy == nullptr) 	return EBTNodeResult::Failed;
 	if (Enemy->AttackAnimMontage == nullptr) 	return EBTNodeResult::Failed;
@@ -31,6 +31,9 @@ EBTNodeResult::Type UAttackPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 	NewRot.Pitch = 0.0f;
 	NewRot.Roll = 0.0f;
 	Enemy->SetActorRotation(NewRot);
+
+	//Enemyのところを示すUIを表示
+	Enemy->SetEnemyDirectionIndicatorActive(true);
 
 	//攻撃のアニメーションを再生
 	float tmp_TimeCount = Enemy->PlayAnimMontage(Enemy->AttackAnimMontage);
@@ -50,6 +53,9 @@ void UAttackPlayerBT::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 	if (bIsAttackEnd)	{
 		//Stateをプレイヤーを攻撃する状態に変更
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("EnemyState", (uint8)EEnemyState::Chase);
+
+		//Enemyのところを示すUIを隠す
+		GetEnemy(OwnerComp)->SetEnemyDirectionIndicatorActive(false);
 
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}

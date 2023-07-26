@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "EnemyTaskBase_BT.h"
 #include "RandomMoveBT.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DESTINYCHANGER_API URandomMoveBT : public UBTTaskNode
+class DESTINYCHANGER_API URandomMoveBT : public UEnemyTaskBase_BT
 {
 	GENERATED_BODY()
 

@@ -1,32 +1,25 @@
-//制作日：2023/07/20　制作者：トウ　処理内容：プレイヤーに攻撃するTask
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "EnemyTaskBase_BT.h"
-#include "AttackPlayerBT.generated.h"
+#include "EnemyTaskBase_BT.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DESTINYCHANGER_API UAttackPlayerBT : public UEnemyTaskBase_BT
+class DESTINYCHANGER_API UEnemyTaskBase_BT : public UBTTaskNode
 {
 	GENERATED_BODY()
 public:
-
-	UAttackPlayerBT();
-
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 protected:
-	bool bIsAttackEnd = false;
+	class AEnemyBase* EnemyPtr = nullptr;
 
-	FTimerHandle TimerHandle_AttackEnd;
-
-	void AttackEnd();
-
+	class AEnemyBase* GetEnemy(UBehaviorTreeComponent& OwnerComp);
 };

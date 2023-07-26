@@ -89,6 +89,9 @@ public:
 
 		class UUserWidget* EnemyDirectionIndicator;		//Enemyの方向を示すUI
 
+		//EnemyDirectionIndicatorのアクティブ
+		void SetEnemyDirectionIndicatorActive(bool bIsActive = true);
+
 //////////////////////////////////////////////////////////////////////////
 ///AI
 public:

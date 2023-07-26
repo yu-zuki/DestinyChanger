@@ -29,7 +29,7 @@ public:
 
 	void Init(AActor* _Enemy, class UArrowComponent* _PlayerArrow);
 protected:
-	//Enemy の参照
+	//EnemyPtr の参照
 	AActor* Enemy = nullptr;
 	//Playerアロー
 	class UArrowComponent* PlayerArrow = nullptr;

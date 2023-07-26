@@ -63,10 +63,11 @@ void AEnemyBase::BeginPlay()
 	GetGameMode()->AttackEndEventBind(this, &AEnemyBase::ResetIsAttacked);
 
 
-	//Debug GetPlayerCharacter
+	//敵の方向を示すUIを生成、デフォルトの状態を隠すで設定
 	ADestinyChangerCharacter* PlayerCharacter = Cast< ADestinyChangerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if(PlayerCharacter)	{
 		EnemyDirectionIndicator = PlayerCharacter->ShowEnemyDirectionIndicator(this);
+		SetEnemyDirectionIndicatorActive(false);
 	}
 
 	//HPUI Set Class
@@ -85,7 +86,7 @@ void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Enemy Hp Set
+	//EnemyPtr Hp Set
 	EnemyWidget->SetHPInfo(HP, MaxHP);
 }
 
@@ -157,6 +158,13 @@ void AEnemyBase::ResetIsAttacked()
 		// 将格式化后的字符串输出到屏幕上
 		UKismetSystemLibrary::PrintString(this, OutputString);
 	}
+}
+
+void AEnemyBase::SetEnemyDirectionIndicatorActive(bool bIsActive)
+{
+	bIsActive ?
+	EnemyDirectionIndicator->SetVisibility(ESlateVisibility::Visible) :
+	EnemyDirectionIndicator->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AEnemyBase::HitDecect()

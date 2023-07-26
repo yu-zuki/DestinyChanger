@@ -280,7 +280,7 @@ UAttackAssistComponent* ADestinyChangerCharacter::GetAttackAssistComponent() con
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Show Enemy Targeting
+// Show EnemyPtr Targeting
 UUserWidget* ADestinyChangerCharacter::ShowEnemyDirectionIndicator(AActor* _Target)
 {
 	//Create Widget

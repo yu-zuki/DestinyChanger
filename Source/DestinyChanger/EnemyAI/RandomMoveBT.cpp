@@ -19,7 +19,7 @@ URandomMoveBT::URandomMoveBT()
 EBTNodeResult::Type URandomMoveBT::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	// Enemyを取得
-	AEnemyBase* Enemy = Cast<AEnemyBase>(OwnerComp.GetAIOwner()->GetPawn());
+	AEnemyBase* Enemy = GetEnemy(OwnerComp);
 	if (Enemy == nullptr) return EBTNodeResult::Failed;
 
 	// NavigationSystemを取得
@@ -41,7 +41,7 @@ EBTNodeResult::Type URandomMoveBT::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 void URandomMoveBT::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	//移動中、プレイヤーとの距離が一定以下なら
-	if (OwnerComp.GetAIOwner()->GetPawn()->GetDistanceTo( UGameplayStatics::GetPlayerCharacter( GetWorld(),0 ) ) < FindPlayerRange) {
+	if (GetEnemy(OwnerComp)->GetDistanceTo( UGameplayStatics::GetPlayerCharacter( GetWorld(),0 ) ) < FindPlayerRange) {
 		
 		//Stateをプレイヤーを追いかける状態に変更
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("EnemyState", (uint8)EEnemyState::Chase);

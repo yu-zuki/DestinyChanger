@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "EnemyTaskBase_BT.h"
 #include "AttackPlayerBT.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DESTINYCHANGER_API UAttackPlayerBT : public UBTTaskNode
+class DESTINYCHANGER_API UAttackPlayerBT : public UEnemyTaskBase_BT
 {
 	GENERATED_BODY()
 public:
@@ -27,4 +28,5 @@ protected:
 	FTimerHandle TimerHandle_AttackEnd;
 
 	void AttackEnd();
+
 };

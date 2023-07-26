@@ -7,7 +7,7 @@
 
 void UEnemyAttacking_ANS::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
-	//Enemy Get
+	//EnemyPtr Get
 	AEnemyBase* Enemy = Cast<AEnemyBase>(MeshComp->GetOwner());
 	if (Enemy) {
 		Enemy->HitDecect();

@@ -37,8 +37,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Flag")
 		bool bIsLookAtPlayer = false;
 
+
+	//HPUI‚ð”ñ•\Ž¦
+	void HideHPUI();
+
+	//ShowUI‚ÌTimer
+	FTimerHandle ShowUITimerHandle;
+
+
 public:
 	//Set HP
 	UFUNCTION(BlueprintCallable, Category = "UI")
 		void SetHPInfo(float HP, float MaxHP);
+	//HPUI‚ð•\Ž¦
+	void ShowHPUI(float _time);
 };

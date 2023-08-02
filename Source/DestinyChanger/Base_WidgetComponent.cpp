@@ -19,6 +19,8 @@ void UBase_WidgetComponent::BeginPlay()
 	if (WidgetClass != nullptr)	{
 		SetWidgetClass(WidgetClass);
 	}
+
+	SetVisibility(false);
 	
 }
 
@@ -53,6 +55,28 @@ void UBase_WidgetComponent::LookAtPlayer()
 		//Apply rotation
 		SetWorldRotation(LookAtRotation);
 	}
+}
+
+void UBase_WidgetComponent::ShowHPUI(float _time)
+{
+	//Component ‚ÌActor‚ðŽæ“¾
+	AActor* Owner = GetOwner();
+
+	//Widget‚ð•\Ž¦
+	SetVisibility(true);
+
+	Owner->GetWorldTimerManager().SetTimer(ShowUITimerHandle, this, &UBase_WidgetComponent::HideHPUI, _time, false);
+
+}
+
+void UBase_WidgetComponent::HideHPUI()
+{
+	//Component ‚ÌActor‚ðŽæ“¾
+	AActor* Owner = GetOwner();
+
+	SetVisibility(false);
+
+	Owner->GetWorldTimerManager().ClearTimer(ShowUITimerHandle);
 }
 
 void UBase_WidgetComponent::SetHPInfo(float HP, float MaxHP)

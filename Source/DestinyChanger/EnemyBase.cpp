@@ -110,8 +110,9 @@ void AEnemyBase::Damage(float Damage)
 	if(AttackedAnimMontage)		//攻撃アニメーションがあるときはそれを再生
 		PlayAnimMontage(AttackedAnimMontage);
 	
+	//HPUIを表示
+	EnemyWidget->ShowHPUI(5.f);
 
-	//HitStop
 
 	HP -= Damage;		//HP = HP - Damage
 	if (HP <= 0)	{
@@ -192,7 +193,7 @@ void AEnemyBase::CheckOverlap(UCapsuleComponent* _AttackCollision)
 	GetWorld()->SweepMultiByChannel(HitResults, Start, End, Rot, ECollisionChannel::ECC_GameTraceChannel2, CollisionShape, CollisionParams);
 
 	//Debug
-	if (true) {
+	if (false) {
 		DrawDebugCapsule(GetWorld(), (Start + End) / 2,
 			CollisionShape.GetCapsuleHalfHeight(),
 			CollisionShape.GetCapsuleRadius(), Rot, FColor::Red, false, 5.0f, 0, 1.0f);

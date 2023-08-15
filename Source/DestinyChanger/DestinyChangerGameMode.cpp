@@ -3,6 +3,7 @@
 #include "DestinyChangerGameMode.h"
 #include "DestinyChangerCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 ADestinyChangerGameMode::ADestinyChangerGameMode()
 {
@@ -31,4 +32,14 @@ void ADestinyChangerGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ADestinyChangerGameMode::AttackEndEventCall()
 {
 	AttackEnd.Broadcast();	//Call ‘S‚Ä‚Ì“G‚ªUŒ‚‚ğó‚¯‚ç‚ê‚é‚æ‚¤‚É‚·‚é
+}
+
+void ADestinyChangerGameMode::AddExp(float _Exp)
+{
+	//Player‚ğæ“¾
+	ADestinyChangerCharacter* Player = Cast<ADestinyChangerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player)
+	{
+		Player->AddExp(_Exp);
+	}
 }

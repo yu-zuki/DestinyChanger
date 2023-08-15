@@ -355,7 +355,7 @@ void ADestinyChangerCharacter::Death()
 
 float ADestinyChangerCharacter::GetAttackPower()
 {
-	return MainWeapon->GetAttackPower();
+	return MainWeapon->GetAttackPower() * fPower;
 }
 
 float ADestinyChangerCharacter::GetDestinySystemTime()
@@ -494,6 +494,37 @@ void ADestinyChangerCharacter::CreateAttackPowerResetTimer()
 	AddDestinySystemTimerLength();	//攻撃力を2倍にする時間を計測
 
 	GetWorldTimerManager().SetTimer(DestinySystemTimerHandle, this, &ADestinyChangerCharacter::AttackPowerReset, fDestinySystemTimerLength);
+}
+
+void ADestinyChangerCharacter::LevelUp()
+{
+	LevelData.fLevelUpExp = LevelData.fLevelUpExp * 1.5f;	//次のレベルアップに必要な経験値を増やす
+
+	LevelData.iLevel++;
+
+	StatusUp();
+}
+
+void ADestinyChangerCharacter::StatusUp()
+{
+	//レベルアップ時のステータスアップ処理
+	//HPを上昇
+	MaxHP += LevelData.iLevel * LevelData.iLevel ;
+
+	//攻撃力を上昇
+	fPower += 1.f;
+}
+
+void ADestinyChangerCharacter::AddExp(float _Exp)
+{
+	//経験値を加算
+	LevelData.fLevelExp += _Exp;
+
+	//レベルアップに必要な経験値を超えたらレベルアップ
+	if (LevelData.fLevelExp >= LevelData.fLevelUpExp) {
+		LevelUp();
+		LevelData.fLevelExp = 0.f;
+	}
 }
 
 

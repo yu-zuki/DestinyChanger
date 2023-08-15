@@ -17,6 +17,7 @@
 
 #include "DestinyChangerCharacter.generated.h"
 
+//çUåÇÉRÉìÉ{
 enum class EAttackComb : uint8
 {
 	LightAttackNone,
@@ -24,6 +25,23 @@ enum class EAttackComb : uint8
 	LightAttackTwo,
 	LightAttackThree,
 	LightAttackFour,
+};
+
+//Level Data
+USTRUCT(BlueprintType)
+struct FLevelData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 iLevel = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float fLevelExp = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float fLevelUpExp = 100.0f;
 };
 
 UCLASS(config=Game)
@@ -266,6 +284,27 @@ protected:
 	void CreateAttackPowerResetTimer();
 
 //////////////////////////////////////////////////////////////////////////
+//LevelSystem
+public:
+	UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = "LevelSystem", meta = (AllowPrivateAccess = "true"))
+		FLevelData LevelData;
+
+	float fPower = 1.f;
+
+	//Get Power
+	float GetPower() { return fPower; }
+
+	//LevelUp
+	void LevelUp();
+
+	//StatusUp
+	void StatusUp();
+
+	//AddExp
+	void AddExp(float _Exp);
+
+
+//////////////////////////////////////////////////////////////////////////
 //UI
 	//ÅìÇéÊìæ
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -282,6 +321,10 @@ protected:
 	//DestinySystemÇÃécÇËéûä‘ÇéÊìæ
 	UFUNCTION(BlueprintCallable, Category = "UI")
 		float GetDestinySystemTime();
+
+	//Get Level Exp LevelUpExp Tuprle
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		FLevelData GetLevelData() { return LevelData; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))

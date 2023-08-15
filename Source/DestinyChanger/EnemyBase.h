@@ -110,6 +110,19 @@ public:
 
 	virtual void CheckOverlap(class UCapsuleComponent* _AttackCollision);
 
+//////////////////////////////////////////////////////////////////////////
+///Level
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
+	int32 iLevel = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
+	float fExp = 50;
+
+	//Player‚ÉExp‚ð—^‚¦‚é
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	void GiveExp();
+
 //////////
 ///Žæ“¾
 protected:

@@ -86,12 +86,19 @@ void ABaseWeapon::EnemyOnOverlap(FHitResult& _HitResult)
 			return;
 		}
 
-		Enemy->Damage(fAttackPower);							//敵にダメージを与える
-		FVector HitLocation = _HitResult.Location;		//ヒットエフェクトの位置
-
-		AActor* Player = GetOwner();			//プレイヤーのヒットストップ処理
+		AActor* Player = GetOwner();			
 		if (Player) {
 			ADestinyChangerCharacter* DestinyChangerCharacter = Cast<ADestinyChangerCharacter>(Player);
+
+			/////////////////////////////////////////
+			//敵にダメージを与える
+			Enemy->Damage(fAttackPower * DestinyChangerCharacter->GetPower());
+
+
+			/////////////////////////////////////////
+			//プレイヤーのヒットストップ処理
+			FVector HitLocation = _HitResult.Location;		//ヒットエフェクトの位置
+
 			if (DestinyChangerCharacter) {
 				DestinyChangerCharacter->GetAttackAssistComponent()->HitStop();
 				DestinyChangerCharacter->GetAttackAssistComponent()->HitEffect(HitEffect,HitLocation,GetActorForwardVector());
@@ -118,7 +125,11 @@ void ABaseWeapon::EnemyOnOverlap(AActor* EnemyActor,FVector HitLocation)
 			return;
 		}
 
-		Enemy->Damage(10);
+		//Playerを取得
+
+
+		float Damage = fAttackPower;
+		Enemy->Damage(Damage);							//敵にダメージを与える
 
 		//HitStop
 		AActor* Player = GetOwner();

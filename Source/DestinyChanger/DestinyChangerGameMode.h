@@ -25,6 +25,8 @@ public:
 	void AttackEndEventBind(ObjectType* Object, MethodType Method);
 
 	void AttackEndEventCall();
+
+	void AddExp(float _Exp);
 };
 
 template<typename ObjectType, typename MethodType>

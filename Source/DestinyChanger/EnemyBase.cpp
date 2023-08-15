@@ -137,6 +137,8 @@ void AEnemyBase::Death()
 		EnemyDirectionIndicator->MarkAsGarbage();
 	}
 
+	GiveExp();	//経験値をプレイヤーに与える
+
 	Destroy();
 }
 
@@ -208,6 +210,12 @@ void AEnemyBase::CheckOverlap(UCapsuleComponent* _AttackCollision)
 			tmp_Player->TakePlayerDamage(AttackDamage);
 		}
 	}
+}
+
+void AEnemyBase::GiveExp()
+{
+	//ExpをGameModeに渡す
+	GetGameMode()->AddExp(fExp);
 }
 
 inline ADestinyChangerGameMode* AEnemyBase::GetGameMode()

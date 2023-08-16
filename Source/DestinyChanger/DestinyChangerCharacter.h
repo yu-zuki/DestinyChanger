@@ -81,6 +81,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack Assist", meta = (AllowPrivateAccess = "true"))
 	class UFreeformRollComponent* FreeformRollComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack Assist", meta = (AllowPrivateAccess = "true"))
+	class UInteractComponent* InteractComponent;
+
 public:
 	ADestinyChangerCharacter();
 	

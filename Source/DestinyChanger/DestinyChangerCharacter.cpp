@@ -17,6 +17,7 @@
 #include "EnemyTargeting.h"
 #include "Components/ArrowComponent.h"
 #include "NiagaraComponent.h"
+#include "InteractComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,6 +69,10 @@ ADestinyChangerCharacter::ADestinyChangerCharacter()
 	//GuardEffectCom
 	GuardEffectCom = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
 	GuardEffectCom->SetupAttachment(RootComponent);
+
+	//InteractComponent
+	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
+
 
 }
 

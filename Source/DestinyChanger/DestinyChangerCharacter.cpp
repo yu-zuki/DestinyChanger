@@ -76,6 +76,9 @@ void ADestinyChangerCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	//Attack Power Ratio Init
+	fAttackPowerRatio = fDefaultAttackPowerRatio;
+
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -462,7 +465,7 @@ void ADestinyChangerCharacter::StopParticleSystem()
 void ADestinyChangerCharacter::ExecuteDestinySystem()
 {
 	//UŒ‚—Í‚ð2”{‚É‚·‚é
-	MainWeapon->SetAttackPowerRatio();
+	MainWeapon->SetAttackPowerRatio( GetAttackPowerRatio() );
 
 	//UŒ‚—Í‚ð2”{‚É‚·‚éŽžŠÔ‚ðŒv‘ª
 	CreateAttackPowerResetTimer();
@@ -494,6 +497,22 @@ void ADestinyChangerCharacter::CreateAttackPowerResetTimer()
 	AddDestinySystemTimerLength();	//UŒ‚—Í‚ð2”{‚É‚·‚éŽžŠÔ‚ðŒv‘ª
 
 	GetWorldTimerManager().SetTimer(DestinySystemTimerHandle, this, &ADestinyChangerCharacter::AttackPowerReset, fDestinySystemTimerLength);
+}
+
+void ADestinyChangerCharacter::AttackPowerRatioReset()
+{
+	//UŒ‚—Í‚Ì”{—¦‚ðÅ‰‚É–ß‚·
+	fAttackPowerRatio = fDefaultAttackPowerRatio;
+}
+
+float ADestinyChangerCharacter::GetAttackPowerRatio()
+{
+	//UŒ‚”{—¦‚ðŒ¸‚Á‚Äs‚­
+	if (fAttackPowerRatio >= 1.f)	{
+		fAttackPowerRatio -= 0.1f;
+	}
+
+	return fAttackPowerRatio;
 }
 
 void ADestinyChangerCharacter::LevelUp()

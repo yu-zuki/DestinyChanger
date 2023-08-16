@@ -283,6 +283,17 @@ protected:
 	//Create AttackPowerReset Timer
 	void CreateAttackPowerResetTimer();
 
+	//AttackPower‚Ì”{—¦
+	float fDefaultAttackPowerRatio = 2.1f;
+
+	float fAttackPowerRatio;
+
+	//AttackPower‚Ì”{—¦‚ðƒŠƒZƒbƒg
+	void AttackPowerRatioReset();
+
+	//Get AttackPowerRatio
+	float GetAttackPowerRatio();
+
 //////////////////////////////////////////////////////////////////////////
 //LevelSystem
 public:

@@ -26,6 +26,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		class UBoxComponent* BoxComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+		class UDialogueManager* DialogueManager;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -22,6 +22,6 @@ class DESTINYCHANGER_API IInteractableAPI
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Interact(AActor* Caller) = 0;
+	virtual void Interact(AActor* Caller = nullptr) = 0;
 
 };

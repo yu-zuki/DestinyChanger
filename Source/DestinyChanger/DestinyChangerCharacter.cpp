@@ -18,6 +18,11 @@
 #include "Components/ArrowComponent.h"
 #include "NiagaraComponent.h"
 #include "InteractComponent.h"
+#include "DialogueManager.h"
+#include "Dialogue_UMG.h"
+#include "InteractableAPI.h"
+
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -116,6 +121,14 @@ void ADestinyChangerCharacter::Tick(float DeltaTime)
 
 void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
 {
+	if (AActor* InteraObj = InteractComponent->GetInteractObject()) {
+		//Cast
+		if (IInteractableAPI* InteractableObject = Cast<IInteractableAPI>(InteraObj)) {
+			InteractableObject->Interact(this);
+			return;
+		}
+	}
+
 	//•Ší‚ðŽ‚Á‚Ä‚¢‚éê‡‚Í•Ší‚ÌØ‚è‘Ö‚¦‚ðs‚¤
 	if (MainWeapon) {
 		if (MainWeapon->GetIsAttachToHand()) {												//•Ší‚ðŽ‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©
@@ -215,7 +228,7 @@ void ADestinyChangerCharacter::SetupPlayerInputComponent(class UInputComponent* 
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADestinyChangerCharacter::Look);
 
 		//Attacking
-		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &ADestinyChangerCharacter::LightAttack);
+		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::LightAttack);
 		//EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Started, this, &ADestinyChangerCharacter::LightAttack);
 		EnhancedInputComponent->BindAction(HeavyAttackAction, ETriggerEvent::Triggered, this, &ADestinyChangerCharacter::HeavyAttack);
 

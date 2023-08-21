@@ -5,6 +5,8 @@
 #include "Components/WidgetComponent.h"
 #include "Components/BoxComponent.h"
 
+#include "DialogueManager.h"
+
 UInteractComponent::UInteractComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -50,7 +52,18 @@ void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// ...d‚­‚È‚é‚©‚à
+	if (InteractWidget) {
+		if (InteractObject) {
+			//GetDialogueManager Component
+			UDialogueManager* InteractObjectComponent = InteractObject->FindComponentByClass<UDialogueManager>();
+			if (InteractObjectComponent) {
+				if (InteractObjectComponent->GetIsDialogueActive()) {
+					InteractWidget->SetVisibility(ESlateVisibility::Hidden);
+				}
+			}
+		}
+	}
 }
 
 void UInteractComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

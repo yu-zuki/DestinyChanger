@@ -4,6 +4,7 @@
 #include "MapItem.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "DialogueManager.h"
 
 // Sets default values
 AMapItem::AMapItem()
@@ -14,6 +15,9 @@ AMapItem::AMapItem()
 	//Create Components
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+
+	//Create DialogueManager
+	DialogueManager = CreateDefaultSubobject<UDialogueManager>(TEXT("DialogueManager"));
 
 	//Set RootComponent
 	RootComponent = MeshComponent;
@@ -37,5 +41,9 @@ void AMapItem::Tick(float DeltaTime)
 
 void AMapItem::Interact(AActor* Caller)
 {
+	if (DialogueManager == nullptr) return;
+
+	//Start Dialogue
+	DialogueManager->EnterDialogue(Caller);
 }
 

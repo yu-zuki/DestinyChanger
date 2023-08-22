@@ -42,7 +42,9 @@ void UDialogueManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-//会話スタート
+/**
+ * 会話を開始します。
+ */
 void UDialogueManager::StartDialogue()
 {
 	//会話開始
@@ -70,13 +72,19 @@ void UDialogueManager::StartDialogue()
 //	return;
 //}
 
-//　会話があるかどうか
+/**
+ * 現在のダイアログがあるかどうかを返します。
+ *
+ * @return ダイアログの有無
+ */
 bool UDialogueManager::HasDialogueToDisplay() const
 {
 	return DialogueData.IsValidIndex(CurrentDialogueIndex);
 }
 
-//　次の会話を表示する
+/**
+ * 現在の会話の次のノードを表示します。
+ */
 void UDialogueManager::ShowNextDialogue()
 {
 	if (HasDialogueToDisplay())	{
@@ -104,6 +112,11 @@ void UDialogueManager::ShowNextDialogue()
 	}
 }
 
+/**
+ * 現在の(次の)ダイアログの説明を返します。
+ *
+ * @return 現在の(次の)ダイアログの説明
+ */
 FDialogueNode UDialogueManager::GetNextDialogueNode()
 {
 	if (DialogueData.IsValidIndex(CurrentDialogueIndex))	{
@@ -116,6 +129,12 @@ FDialogueNode UDialogueManager::GetNextDialogueNode()
 	}
 }
 
+/**
+ * キャラクターが会話に入った場合、
+ * そのキャラクターがUInteractComponentを持っている場合は、UIの表示を隠します。
+ *
+ * @param _Caller キャラクターのアクターオブジェクト
+ */
 void UDialogueManager::EnterDialogue(AActor* _Caller)
 {
 

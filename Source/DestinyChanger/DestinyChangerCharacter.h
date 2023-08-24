@@ -7,6 +7,9 @@
 //更新日：2023/07/21　更新者：トウ　更新内容：防御処理の追加
 //更新日：2023/07/22　更新者：トウ　更新内容：UIの追加
 //更新日：2023/07/23　更新者：トウ　更新内容：DestinySystemの追加
+//更新日：2023/07/30　更新者：トウ　更新内容：Guardの追加
+//更新日：2023/08/07　更新者：トウ　更新内容：InteractSystemの追加
+//更新日：2023/08/25　更新者：トウ　更新内容：QuestSystemの追加
 
 
 #pragma once
@@ -222,6 +225,7 @@ protected:
 		float MaxHP;
 
 	void Death();
+
 //////////////////////////////////////////////////////////////////////////
 //防御処理
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
@@ -320,6 +324,10 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //UI
+	////UI Class
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "UI")
+		class UUserWidget* PlayerUI;
+
 	//％を取得
 	UFUNCTION(BlueprintCallable, Category = "UI")
 		float GetHPPercent() { return HP / MaxHP; }
@@ -339,6 +347,18 @@ public:
 	//Get Level Exp LevelUpExp Tuprle
 	UFUNCTION(BlueprintCallable, Category = "UI")
 		FLevelData GetLevelData() { return LevelData; }
+
+
+//////////////////////////////////////////////////////////////////////////
+//QuestSystem
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest", meta = (AllowPrivateAccess = "true"))
+	class UQuestSystem* QuestSystemComponent;
+
+	//UI　Bind　QuestSystemt通知
+	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
+		void BindQuestSystemNotify(FName _Name);
+
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))

@@ -152,6 +152,10 @@ FDialogueNode UDialogueManager::GetNextDialogueNode()
 void UDialogueManager::EnterDialogue(AActor* _Caller)
 {
 
+	if (_Caller != nullptr) {
+		_Caller->FindComponentByClass<UInteractComponent>()->SetUIActive(!bIsDialogueActive);
+	}
+
 	if (!bIsDialogueActive) {
 		StartDialogue();
 	}
@@ -159,8 +163,5 @@ void UDialogueManager::EnterDialogue(AActor* _Caller)
 		ShowNextDialogue();
 	}
 
-	if (_Caller != nullptr) {
-		_Caller->FindComponentByClass<UInteractComponent>()->SetUIActive(!bIsDialogueActive);
-	}
 }
 

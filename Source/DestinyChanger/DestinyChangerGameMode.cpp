@@ -61,3 +61,12 @@ void ADestinyChangerGameMode::AddExp(float _Exp)
 		Player->AddExp(_Exp);
 	}
 }
+
+AQuestDatabase* ADestinyChangerGameMode::GetQuestDatabase()
+{
+	if (QuestDatabaseInstance)	{
+		return QuestDatabaseInstance;
+	}
+
+	return nullptr;
+}

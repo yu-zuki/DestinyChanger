@@ -52,6 +52,13 @@ void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (InteractObject != nullptr) {
+		if ( InteractObject->IsValidLowLevel() != true) {
+			InteractWidget->SetVisibility(ESlateVisibility::Hidden);
+			InteractObject = nullptr;
+		}
+	}
+
 	// ...èdÇ≠Ç»ÇÈÇ©Ç‡
 	if (InteractWidget) {
 		if (InteractObject) {

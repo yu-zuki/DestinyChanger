@@ -1,5 +1,6 @@
 ﻿//制作日：2023/07/08　制作者：トウ　処理内容：ゲームのルールとツールメソッド
 //制作日：2023/07/08　制作者：トウ　更新内容：委託イベントの追加
+//制作日：2023/08/25　制作者：トウ　更新内容：クエストのデータベースを追加
 
 #pragma once
 
@@ -30,12 +31,25 @@ public:
 
 	void AddExp(float _Exp);
 
+
+//////////////////////////////////////////////////////////////////////////
+//Quest
+protected:
 	//GameQuest
 	class AQuestDatabase* QuestDatabaseInstance;
 
+public:
 	//SubClass
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubClass")
 		TSubclassOf<class AQuestDatabase> QuestDatabaseClass;
+
+	//GetQuestDatabase
+	UFUNCTION(BlueprintCallable, Category = "Quest")
+	class AQuestDatabase* GetQuestDatabase();
+
+
+
+
 
 };
 

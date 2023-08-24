@@ -6,6 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "QuestSystem.generated.h"
 
+DECLARE_DELEGATE_OneParam(NotifyExecutingQuest, FName);
+
+//DECLARE_MULTICAST_DELEGATE(NotifyExecutingQuest);
+
 //クエストの会話
 USTRUCT(BlueprintType)
 struct FQuestDialogue
@@ -109,44 +113,83 @@ public:
 
 	//GetPlayer
 	class ADestinyChangerCharacter* GetPlayer();
-	
+
+//////////////////////////////////////////////////////////////////////////
+// GameMode
+protected:
+	class ADestinyChangerGameMode* GetGameMode();
+
+	class ADestinyChangerGameMode* GameMode;
 
 protected:
-	//激活的任务
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//アクティブなクエスト
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		TArray<FName> ActiveQuests;
-	//完成的任务
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//クリアしたクエスト
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		TArray<FName> CompletedQuests;
-	//执行的任务
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//実行中のクエスト
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		TArray<FName> ExecutingQuests;
-	//任务道具
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//クエストアイテム
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		TMap<FName, int32> QuestItems;
-	//讨伐记录
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//敵を倒した記録
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		TMap<FName, int32> DefeatRecords;
 
 ////////////////////////////////////////////////////////////////////////////////////
-
-	//添加激活的任务
+public:
+	//　受注可能なクエストを追加する
 	UFUNCTION(BlueprintCallable)
 		void AddActiveQuest(FName QuestID);
 
-	//添加完成的任务
+	//　クエストをクリアする
 	UFUNCTION(BlueprintCallable)
 		void AddCompletedQuest(FName QuestID);
 
-	//添加执行的任务
+	//　実行中のクエストを追加する
 	UFUNCTION(BlueprintCallable)
 		void AddExecutingQuest(FName QuestID);
 
-	//添加任务道具
+	//　クエストアイテムを追加する
 	UFUNCTION(BlueprintCallable)
 		void AddQuestItem(FName ItemID, int32 Num);
 
-	//添加讨伐记录
+	//　敵を倒した記録を追加する
 	UFUNCTION(BlueprintCallable)
 		void AddDefeatRecord(FName EnemyID, int32 Num);
+
+////////////////////////////////////////////////////////////////////////////////////
+//UI
+
+public:
+	//GetActiveQuests
+	UFUNCTION(BlueprintCallable)
+		TArray<FQuestStruct> GetActiveQuests();
+
+	//GetCompletedQuests
+	UFUNCTION(BlueprintCallable)
+		TArray<FQuestStruct> GetCompletedQuests();
+
+	//GetExecutingQuests
+	UFUNCTION(BlueprintCallable)
+		TArray<FQuestStruct> GetExecutingQuests();
+
+	//GetQuestItems
+	UFUNCTION(BlueprintCallable)
+		int32 GetQuestItems(FName ItemID);
+
+	//GetDefeatRecords
+	UFUNCTION(BlueprintCallable)
+		int32 GetDefeatRecords(FName ItemID);
+
+	//実行中のクエストを追加したことをUIに通知
+	NotifyExecutingQuest UINotifyExecutingQuest;
+
+	template <typename ObjectType, typename MethodType>
+	void BindUINotifyExecutingQuest(ObjectType* Object, MethodType Method)
+	{
+		UINotifyExecutingQuest.BindUObject(Object, Method);
+	}
 };

@@ -13,5 +13,16 @@ UCLASS()
 class DESTINYCHANGER_API AQuestMapItem : public AMapItem
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	class UQuestGiverComponent* QuestGiverComponent;
+
+public:
+	AQuestMapItem();
+
+	UFUNCTION(BlueprintCallable, Category = "Quest")
+	void GiveQuestToPlayer();
 };

@@ -21,6 +21,7 @@
 #include "DialogueManager.h"
 #include "Dialogue_UMG.h"
 #include "InteractableAPI.h"
+#include "QuestSystem.h"
 
 
 
@@ -78,6 +79,9 @@ ADestinyChangerCharacter::ADestinyChangerCharacter()
 	//InteractComponent
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
 
+	//QuestComponent
+	QuestSystemComponent = CreateDefaultSubobject<UQuestSystem>(TEXT("QuestComponent"));
+
 
 }
 
@@ -85,6 +89,9 @@ void ADestinyChangerCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	//クエストシステムがUIに通知するためのバインド
+	QuestSystemComponent->BindUINotifyExecutingQuest(this,&ADestinyChangerCharacter::BindQuestSystemNotify);
 
 	//Attack Power Ratio Init
 	fAttackPowerRatio = fDefaultAttackPowerRatio;

@@ -4,6 +4,7 @@
 #include "DestinyChangerCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "QuestDatabase.h"
 
 ADestinyChangerGameMode::ADestinyChangerGameMode()
 {
@@ -13,6 +14,23 @@ ADestinyChangerGameMode::ADestinyChangerGameMode()
 	//{
 	//	DefaultPawnClass = PlayerPawnBPClass.Class;
 	//}
+}
+
+void ADestinyChangerGameMode::BeginPlay()
+{
+	if (QuestDatabaseClass)	{
+		QuestDatabaseInstance = GetWorld()->SpawnActor<AQuestDatabase>(QuestDatabaseClass);
+	}
+
+	//Print QuestDatabaseInstance Data
+	UE_LOG(LogTemp, Warning, TEXT("Quest Database Initialized."));
+
+	TArray<FQuestStruct> QuestDataArray = QuestDatabaseInstance->AllQuests;
+	for (const FQuestStruct& QuestData : QuestDataArray)	{
+		UE_LOG(LogTemp, Warning, TEXT("QuestID: %s, Description: %s"), *QuestData.QuestDetail.ID.ToString(), *QuestData.QuestDetail.Description.ToString());
+	}
+	
+
 }
 
 void ADestinyChangerGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

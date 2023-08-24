@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "DialogueManager.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(DialogueFinishedDelegate);
+
 USTRUCT(BlueprintType)
 struct FDialogueNode
 {
@@ -30,6 +32,8 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	virtual void BeginDestroy() override;
 
 public:	
 	// Called every frame
@@ -67,6 +71,17 @@ public:
 	//GetFlag
 	bool GetIsDialogueActive() const { return bIsDialogueActive; } // 会話がアクティブかどうかを取得する
 		
+//////////////////////////////////////////////////////////////////////////
+//Delegate
+public:
+	DialogueFinishedDelegate DialogueFinished; // 会話が終わった時のデリゲート
+
+	template <typename ObjectType, typename MethodType>
+	void AddDialogueFinishedEventCall(ObjectType* Object, MethodType Method)
+	{
+		DialogueFinished.AddUObject(Object, Method);
+	}
+
 //////////////////////////////////////////////////////////////////////////
 // UMG
 protected:

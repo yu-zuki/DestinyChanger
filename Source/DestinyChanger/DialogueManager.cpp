@@ -33,6 +33,16 @@ void UDialogueManager::BeginPlay()
 	
 }
 
+void UDialogueManager::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	//Clear Delegate
+	if (DialogueFinished.IsBound()) {
+		DialogueFinished.Clear();
+	}
+
+}
 
 // Called every frame
 void UDialogueManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -108,6 +118,10 @@ void UDialogueManager::ShowNextDialogue()
 		//　会話が終わったら会話ウィジェットを非表示にする
 		DialogueWidget->SetVisibility(ESlateVisibility::Hidden);
 
+		//　会話が終わったらDelegateを呼び出す
+		if (DialogueFinished.IsBound())		{
+			DialogueFinished.Broadcast();
+		}
 
 	}
 }

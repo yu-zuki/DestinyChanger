@@ -28,9 +28,11 @@ public:
 	UPROPERTY(Meta = (BindWidget))
 		class UTextBlock* DialogueText;
 
-	//”wŒi–ÍŒÐ
+	//‚Ú‚©‚µ
 	UPROPERTY(Meta = (BindWidget))
 		class UBackgroundBlur* Blur;
+	UPROPERTY(Meta = (BindWidget))
+		class UBackgroundBlur* BlurName;
 
 
 

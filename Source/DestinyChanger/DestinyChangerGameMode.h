@@ -17,6 +17,8 @@ class ADestinyChangerGameMode : public AGameModeBase
 public:
 	ADestinyChangerGameMode();
 
+	virtual void BeginPlay() override;
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	AttackEndEventSignature AttackEnd;			
@@ -27,6 +29,14 @@ public:
 	void AttackEndEventCall();
 
 	void AddExp(float _Exp);
+
+	//GameQuest
+	class AQuestDatabase* QuestDatabaseInstance;
+
+	//SubClass
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubClass")
+		TSubclassOf<class AQuestDatabase> QuestDatabaseClass;
+
 };
 
 template<typename ObjectType, typename MethodType>

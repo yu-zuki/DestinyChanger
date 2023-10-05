@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/09/28　制作者：トウ　更新内容：プレイヤーが拾えるアイテムクラス
 
 #pragma once
 
@@ -26,6 +26,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Quest")
 	void PickableQuestItem();
 
+	UFUNCTION(BlueprintCallable, Category = "Quest")
+	void SetActorDeepHidden(bool _isHidden);
 
 	
 };

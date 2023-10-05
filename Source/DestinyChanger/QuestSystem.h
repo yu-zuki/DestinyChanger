@@ -7,6 +7,7 @@
 #include "QuestSystem.generated.h"
 
 DECLARE_DELEGATE_OneParam(NotifyExecutingQuest, FName);
+DECLARE_DELEGATE_OneParam(NotifyExecutingQuestComplete, FName);
 
 //DECLARE_MULTICAST_DELEGATE(NotifyExecutingQuest);
 
@@ -191,5 +192,14 @@ public:
 	void BindUINotifyExecutingQuest(ObjectType* Object, MethodType Method)
 	{
 		UINotifyExecutingQuest.BindUObject(Object, Method);
+	}
+
+	//実行中のクエストを完了したことをUIに通知
+	NotifyExecutingQuestComplete UINotifyExecutingQuestComplete;
+
+	template <typename ObjectType, typename MethodType>
+	void BindUINotifyExecutingQuestComplete(ObjectType* Object, MethodType Method)
+	{
+		UINotifyExecutingQuestComplete.BindUObject(Object, Method);
 	}
 };

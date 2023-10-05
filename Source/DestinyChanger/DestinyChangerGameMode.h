@@ -22,7 +22,7 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	AttackEndEventSignature AttackEnd;			
+	AttackEndEventSignature AttackEnd;			//攻撃終了のイベント
 
 	template <typename ObjectType, typename MethodType>
 	void AttackEndEventBind(ObjectType* Object, MethodType Method);
@@ -37,20 +37,23 @@ public:
 protected:
 	//GameQuest
 	class AQuestDatabase* QuestDatabaseInstance;
+	class AItemDataBase* ItemDatabaseInstance;
 
 public:
 	//SubClass
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubClass")
 		TSubclassOf<class AQuestDatabase> QuestDatabaseClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubClass")
+		TSubclassOf<class AItemDataBase> ItemDatabaseClass;
+
 	//GetQuestDatabase
 	UFUNCTION(BlueprintCallable, Category = "Quest")
 	class AQuestDatabase* GetQuestDatabase();
 
-
-
-
-
+	//GetItemDatabase
+	UFUNCTION(BlueprintCallable, Category = "Quest")
+	class AItemDataBase* GetItemDatabase();
 };
 
 template<typename ObjectType, typename MethodType>

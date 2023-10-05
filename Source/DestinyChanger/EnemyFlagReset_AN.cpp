@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/07/08　制作者：トウ　処理内容：敵のダメージ受けのフラグをリセット
 
 
 #include "EnemyFlagReset_AN.h"

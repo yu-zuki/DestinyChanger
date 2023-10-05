@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DestinyChangerGameMode.h"
 #include "QuestDatabase.h"
+#include "ItemDataBase.h"
 
 
 // Sets default values for this component's properties
@@ -60,7 +61,7 @@ ADestinyChangerGameMode* UQuestSystem::GetGameMode()
 void UQuestSystem::AddActiveQuest(FName QuestID)
 {
 	//QuestDatabaseからクエストが存在するか確認する
-	if( !GameMode->GetQuestDatabase()->QuestExists(QuestID) ) return;
+	if( !GetGameMode()->GetQuestDatabase()->QuestExists(QuestID) ) return;
 
 	//アクティブのクエストを追加する
 	ActiveQuests.Add(QuestID);
@@ -79,6 +80,12 @@ void UQuestSystem::AddCompletedQuest(FName QuestID)
 
 	//実行中のクエストから削除する
 	ExecutingQuests.Remove(QuestID);
+
+	//Print
+	UE_LOG(LogTemp, Warning, TEXT("Completed Quest: %s"), *QuestID.ToString());
+
+	//クエストを完成したことを通知する
+	UINotifyExecutingQuestComplete.ExecuteIfBound(QuestID);
 }
 
 void UQuestSystem::AddExecutingQuest(FName QuestID)
@@ -93,6 +100,29 @@ void UQuestSystem::AddExecutingQuest(FName QuestID)
 
 void UQuestSystem::AddQuestItem(FName ItemID, int32 Num)
 {
+	//ItemBaseからアイテムが存在するか確認する
+	if (!GetGameMode()->GetItemDatabase()->ItemExists(ItemID)) return;
+
+	//QuestItemsにアイテムを追加する
+	QuestItems.Add(ItemID, Num);
+
+	//アイテムの数がクエストの数を超えたら、クエストを完成する。
+	//そのため、全てのクエストを確認する
+	for (auto& QuestID : ExecutingQuests) {
+		//QuestDatabaseからクエストを取得する
+		FQuestStruct Quest = GetGameMode()->GetQuestDatabase()->GetQuest(QuestID);
+
+		//クエストのアイテムがQuestItemsに存在するか確認する
+		if (Quest.QuestDetail.NeedNum > 0) {
+
+			int32 tmp_NowNum = QuestItems.FindRef(Quest.QuestDetail.NeedTargetID);
+			int32 tmp_NeedNum = Quest.QuestDetail.NeedNum;
+			//クエストのアイテムの数がQuestItemsの数を超えたら、クエストを完成する
+			if (tmp_NeedNum >= tmp_NowNum){
+				AddCompletedQuest(QuestID);
+			}
+		}
+	}
 }
 
 void UQuestSystem::AddDefeatRecord(FName EnemyID, int32 Num)
@@ -104,7 +134,7 @@ TArray<FQuestStruct> UQuestSystem::GetActiveQuests()
 	//QuestDatabaseからアクティブクエストを取得する
 	TArray<FQuestStruct> Quests;
 	for (auto& QuestID : ActiveQuests) {
-		Quests.Add(GameMode->GetQuestDatabase()->GetQuest(QuestID));
+		Quests.Add(GetGameMode()->GetQuestDatabase()->GetQuest(QuestID));
 	}
 	return Quests;
 }
@@ -114,7 +144,7 @@ TArray<FQuestStruct> UQuestSystem::GetCompletedQuests()
 	//QuestDatabaseから完成クエストを取得する
 	TArray<FQuestStruct> Quests;
 	for (auto& QuestID : CompletedQuests) {
-		Quests.Add(GameMode->GetQuestDatabase()->GetQuest(QuestID));
+		Quests.Add(GetGameMode()->GetQuestDatabase()->GetQuest(QuestID));
 	}
 	return Quests;
 }
@@ -124,7 +154,7 @@ TArray<FQuestStruct> UQuestSystem::GetExecutingQuests()
 	//QuestDatabaseから実行中クエストを取得する
 	TArray<FQuestStruct> Quests;
 	for (auto& QuestID : ExecutingQuests) {
-		Quests.Add(GameMode->GetQuestDatabase()->GetQuest(QuestID));
+		Quests.Add(GetGameMode()->GetQuestDatabase()->GetQuest(QuestID));
 	}
 	return Quests;
 }

@@ -190,7 +190,7 @@ public:
 	UAttackAssistComponent* GetAttackAssistComponent() const;
 
 //////////////
-//EnemyDirectionIndicator
+//EnemyDirectionIndicator　敵の方向を示す矢印
 public:
 	class UUserWidget* ShowEnemyDirectionIndicator(AActor * _Target);
 	UArrowComponent* GetEnemyDirectionIndicator() const;
@@ -359,6 +359,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
 		void BindQuestSystemNotify(FName _Name);
 
+	//UI　Bind　QuestSystemt通知 クエストをコンプリートした時
+	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
+		void BindQuestSystemNotifyComplete(FName _Name);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))

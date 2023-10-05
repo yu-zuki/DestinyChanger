@@ -1,3 +1,5 @@
+//制作日：2023/08/25　制作者：トウ　更新内容：プレイヤーにクエストを与えるコンポーネントを作成
+
 #include "QuestGiverComponent.h"
 #include "DestinyChangerCharacter.h"
 #include "DestinyChangerGameMode.h"

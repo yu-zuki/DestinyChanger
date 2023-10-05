@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/08/01　制作者：トウ　更新内容：Trigger Eventsのクラスを作成
 
 #pragma once
 

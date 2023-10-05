@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/08/28　制作者：トウ　更新内容：マップ上のアイテムクラス
 
 
 #include "MapItem.h"

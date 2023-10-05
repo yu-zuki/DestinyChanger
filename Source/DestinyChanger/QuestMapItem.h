@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/08/26　制作者：トウ　更新内容：マップ上のアイテムのクラス
 
 #pragma once
 
@@ -25,4 +25,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Quest")
 	void GiveQuestToPlayer();
+
+	//会話が終わったら、ターゲットのActorをスポーンする
+	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
+		void SpawnTargetActor();
 };

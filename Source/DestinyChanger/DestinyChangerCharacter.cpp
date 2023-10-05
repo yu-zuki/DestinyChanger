@@ -92,6 +92,7 @@ void ADestinyChangerCharacter::BeginPlay()
 
 	//クエストシステムがUIに通知するためのバインド
 	QuestSystemComponent->BindUINotifyExecutingQuest(this,&ADestinyChangerCharacter::BindQuestSystemNotify);
+	QuestSystemComponent->BindUINotifyExecutingQuestComplete( this, &ADestinyChangerCharacter::BindQuestSystemNotifyComplete);
 
 	//Attack Power Ratio Init
 	fAttackPowerRatio = fDefaultAttackPowerRatio;
@@ -126,6 +127,16 @@ void ADestinyChangerCharacter::Tick(float DeltaTime)
 	GuradFlagReset(DeltaTime);
 }
 
+/**
+ * @brief   LightAttackアクションのコールバックです。
+ *
+ * @details アタックアシストがヒットした場合、インタラクト可能オブジェクトがある場合はインタラクトを呼び出し、武器を持っていない場合は装備します。
+ *          武器を持っている場合、isAttackingフラグを立てて攻撃を開始し、攻撃コンボを1つカウントアップします。
+ *
+ * @param   Value InputActionValue
+ *
+ * @return  なし
+ */
 void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
 {
 	if (AActor* InteraObj = InteractComponent->GetInteractObject()) {
@@ -180,6 +191,7 @@ void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
 
 void ADestinyChangerCharacter::HeavyAttack(const FInputActionValue& Value)
 {
+	//まだ実装していない　Debugキーとして使用
 	UGameplayStatics::OpenLevel(GetWorld(), FName( *UGameplayStatics::GetCurrentLevelName( GetWorld() ) ) );
 }
 
@@ -250,6 +262,14 @@ void ADestinyChangerCharacter::SetupPlayerInputComponent(class UInputComponent* 
 
 }
 
+/**
+ * @brief アクタを移動するための関数
+ * 
+ * @details 入力された値に応じてアクタを移動します。入力はVector2D型です。
+* 
+ * @param Value 入力されたアクションの値
+ * @return なし
+ */
 void ADestinyChangerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -296,6 +316,13 @@ ABaseWeapon* ADestinyChangerCharacter::GetMainWeapon() const
 	return MainWeapon;
 }
 
+/**
+ * @brief ロールアクションを実行します。
+ * 
+ * @details FreeformRollComponentを使用して、ロールアクションを実行します。
+ * 
+ * @return なし
+ */
 void ADestinyChangerCharacter::Roll(const FInputActionValue& Value)
 {
 	FreeformRollComponent->RollProcess();
@@ -307,8 +334,15 @@ UAttackAssistComponent* ADestinyChangerCharacter::GetAttackAssistComponent() con
 	return AttackAssistComponent;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Show EnemyPtr Targeting
+/**
+* @brief 敵の方向を示す矢印を表示する
+* 
+* @details UMGを作成し、初期化してViewportに追加する。
+* 
+* @param _Target : ターゲットとなるAActor*（　Enemy）
+* 
+* @return UUserWidget* : 作成されたWidgetのアドレスを返す。失敗時はnullptrを返す。
+*/
 UUserWidget* ADestinyChangerCharacter::ShowEnemyDirectionIndicator(AActor* _Target)
 {
 	//Create Widget
@@ -332,6 +366,16 @@ UArrowComponent* ADestinyChangerCharacter::GetEnemyDirectionIndicator() const
 	return EnemyDirectionIndicator;
 }
 
+/**
+ * @brief 攻撃を受けた時の処理
+ * 
+ * @details ダメージを受けた時HPを減らして、HPが0以下になったら死亡処理を行います。　
+ *			ガード中はDestinySystemを発動します、一回ダメージを受ける無敵時間が発生します。
+ * 
+ * @param _Damage 受けるダメージ量
+ * 
+ * @return void
+ */
 void ADestinyChangerCharacter::TakePlayerDamage(float _Damage)
 {
 	//無敵状態なら処理を行わない
@@ -381,16 +425,33 @@ void ADestinyChangerCharacter::Death()
 	PlayAnimMontage(AnimMontage_Death);
 }
 
+/**
+ * @brief 攻撃力の倍率を設定処理
+ *
+ * @details プレイヤーのレベルに応じて攻撃力の倍率を設定します。
+ *
+ * @return void
+ */
 float ADestinyChangerCharacter::GetAttackPower()
 {
 	return MainWeapon->GetAttackPower() * fPower;
 }
+
 
 float ADestinyChangerCharacter::GetDestinySystemTime()
 {
 	return GetWorld()->GetTimerManager().GetTimerRemaining(DestinySystemTimerHandle);
 }
 
+/**
+* @brief ガード判定を行う
+* 
+* @details プレイヤーがガードボタンを押したかを判定し、ガード状態にする
+* 
+* @param Value ボタン入力値
+* 
+* @return void
+*/
 void ADestinyChangerCharacter::OnGuard(const FInputActionValue& Value)
 {
 	//CD中
@@ -409,6 +470,13 @@ void ADestinyChangerCharacter::OffGuard(const FInputActionValue& Value)
 	bIsGuarding = false;
 }
 
+
+/**
+ * @brief ガードの処理関数
+ * 
+ * @details ガード中はエフェクトを再生、ガードゲージを減らし、
+ *			ガードゲージが0になったらガード状態を解除する。エフェクトも停止する。
+ */
 void ADestinyChangerCharacter::GuradFlagReset(float _DeltaTime)
 {
 	//1フレームの理想時間

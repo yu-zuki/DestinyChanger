@@ -1,5 +1,5 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+﻿//制作日：2023/07/08　制作者：トウ　処理内容：武器の処理
+//制作日：2023/07/09　制作者：トウ　更新内容：HitStop、HitEffect、Damgeの処理を追加
 
 #include "BaseWeapon.h"
 #include "Components/SkeletalMeshComponent.h"

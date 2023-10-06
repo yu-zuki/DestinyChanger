@@ -22,6 +22,8 @@
 #include "Dialogue_UMG.h"
 #include "InteractableAPI.h"
 #include "QuestSystem.h"
+#include "DestinyChangerGameMode.h"
+#include "QuestGiverComponent.h"
 
 
 
@@ -82,6 +84,9 @@ ADestinyChangerCharacter::ADestinyChangerCharacter()
 	//QuestComponent
 	QuestSystemComponent = CreateDefaultSubobject<UQuestSystem>(TEXT("QuestComponent"));
 
+	//QuestGiverComponent
+	QuestGiverrComponent = CreateDefaultSubobject<UQuestGiverComponent>(TEXT("QuestGiverComponent"));
+
 
 }
 
@@ -90,9 +95,11 @@ void ADestinyChangerCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	//クエストシステムがUIに通知するためのバインド
-	QuestSystemComponent->BindUINotifyExecutingQuest(this,&ADestinyChangerCharacter::BindQuestSystemNotify);
-	QuestSystemComponent->BindUINotifyExecutingQuestComplete( this, &ADestinyChangerCharacter::BindQuestSystemNotifyComplete);
+	if (QuestSystemComponent != nullptr) {
+		//クエストシステムがUIに通知するためのバインド
+		QuestSystemComponent->BindUINotifyExecutingQuest(this, &ADestinyChangerCharacter::BindQuestSystemNotify);
+		QuestSystemComponent->BindNotifyExecutingQuestComplete(this, &ADestinyChangerCharacter::QuestSystemComplete);
+	}
 
 	//Attack Power Ratio Init
 	fAttackPowerRatio = fDefaultAttackPowerRatio;
@@ -130,7 +137,8 @@ void ADestinyChangerCharacter::Tick(float DeltaTime)
 /**
  * @brief   LightAttackアクションのコールバックです。
  *
- * @details アタックアシストがヒットした場合、インタラクト可能オブジェクトがある場合はインタラクトを呼び出し、武器を持っていない場合は装備します。
+ * @details アタックアシストがヒットした場合、インタラクト可能オブジェクトがある場合はインタラクトを呼び出し終了する。
+ *			武器を持っていない場合は装備します。
  *          武器を持っている場合、isAttackingフラグを立てて攻撃を開始し、攻撃コンボを1つカウントアップします。
  *
  * @param   Value InputActionValue
@@ -443,6 +451,16 @@ float ADestinyChangerCharacter::GetDestinySystemTime()
 	return GetWorld()->GetTimerManager().GetTimerRemaining(DestinySystemTimerHandle);
 }
 
+void ADestinyChangerCharacter::QuestSystemComplete(FName _ID)
+{
+	//UIに通知
+	BindQuestSystemNotifyComplete( _ID );
+
+	//BPで実装されたイベントを実行
+	TaskCompletionBlueprintAction( _ID );
+
+}
+
 /**
 * @brief ガード判定を行う
 * 
@@ -617,11 +635,20 @@ void ADestinyChangerCharacter::LevelUp()
 	StatusUp();
 }
 
+/**
+ * @brief レベルアップ時のステータスアップ処理
+ * 
+ * @details HPを上昇し、攻撃力を上昇させる。
+ * 
+ * @return None
+ */
 void ADestinyChangerCharacter::StatusUp()
 {
 	//レベルアップ時のステータスアップ処理
 	//HPを上昇
 	MaxHP += LevelData.iLevel * LevelData.iLevel ;
+
+	HP = MaxHP;
 
 	//攻撃力を上昇
 	fPower += 1.f;

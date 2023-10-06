@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/07/08　制作者：トウ　処理内容：攻撃アクションの特定のフレームの間に敵に攻撃処理
 
 
 #include "Attacking_AN.h"

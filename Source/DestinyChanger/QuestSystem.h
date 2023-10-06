@@ -7,7 +7,7 @@
 #include "QuestSystem.generated.h"
 
 DECLARE_DELEGATE_OneParam(NotifyExecutingQuest, FName);
-DECLARE_DELEGATE_OneParam(NotifyExecutingQuestComplete, FName);
+DECLARE_DELEGATE_OneParam(NotifyExecutingQuestComplete, FName);//クエストが完了した時に呼び出すデリゲート
 
 //DECLARE_MULTICAST_DELEGATE(NotifyExecutingQuest);
 
@@ -194,12 +194,16 @@ public:
 		UINotifyExecutingQuest.BindUObject(Object, Method);
 	}
 
-	//実行中のクエストを完了したことをUIに通知
-	NotifyExecutingQuestComplete UINotifyExecutingQuestComplete;
+	//実行中のクエストを完了したことを通知
+	NotifyExecutingQuestComplete NotifyExecutingQuestComplete;
 
 	template <typename ObjectType, typename MethodType>
-	void BindUINotifyExecutingQuestComplete(ObjectType* Object, MethodType Method)
+	void BindNotifyExecutingQuestComplete(ObjectType* Object, MethodType Method)
 	{
-		UINotifyExecutingQuestComplete.BindUObject(Object, Method);
+		NotifyExecutingQuestComplete.BindUObject(Object, Method);
 	}
+
+	//クエストをコンプリートした後の処理
+	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
+		void CompleteQuest(FName QuestID);
 };

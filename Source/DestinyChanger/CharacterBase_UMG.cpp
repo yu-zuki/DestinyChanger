@@ -16,6 +16,15 @@ void UCharacterBase_UMG::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	}
 }
 
+/**
+ * @brief キャラクターの情報をUIに設定します。
+ * 
+ * @details キャラクターの現在HPと最大HPをUIに設定します。
+ * 
+ * @param HP キャラクターの現在HP
+ * 
+ * @param MaxHP キャラクターの最大HP
+ */
 void UCharacterBase_UMG::SetPlayerInfo(float HP, float MaxHP)
 {
 	fHP = HP;

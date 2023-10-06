@@ -85,7 +85,10 @@ void UQuestSystem::AddCompletedQuest(FName QuestID)
 	UE_LOG(LogTemp, Warning, TEXT("Completed Quest: %s"), *QuestID.ToString());
 
 	//クエストを完成したことを通知する
-	UINotifyExecutingQuestComplete.ExecuteIfBound(QuestID);
+	NotifyExecutingQuestComplete.ExecuteIfBound(QuestID);
+
+	//Expを追加する
+	GetGameMode()->AddExp( GetGameMode()->GetQuestDatabase()->GetQuest(QuestID).QuestDetail.RewardExp );
 }
 
 void UQuestSystem::AddExecutingQuest(FName QuestID)
@@ -104,7 +107,7 @@ void UQuestSystem::AddQuestItem(FName ItemID, int32 Num)
 	if (!GetGameMode()->GetItemDatabase()->ItemExists(ItemID)) return;
 
 	//QuestItemsにアイテムを追加する
-	QuestItems.Add(ItemID, Num);
+	QuestItems.Add(ItemID, QuestItems.FindRef( ItemID ) + Num);
 
 	//アイテムの数がクエストの数を超えたら、クエストを完成する。
 	//そのため、全てのクエストを確認する
@@ -118,7 +121,7 @@ void UQuestSystem::AddQuestItem(FName ItemID, int32 Num)
 			int32 tmp_NowNum = QuestItems.FindRef(Quest.QuestDetail.NeedTargetID);
 			int32 tmp_NeedNum = Quest.QuestDetail.NeedNum;
 			//クエストのアイテムの数がQuestItemsの数を超えたら、クエストを完成する
-			if (tmp_NeedNum >= tmp_NowNum){
+			if (tmp_NowNum >= tmp_NeedNum){
 				AddCompletedQuest(QuestID);
 			}
 		}

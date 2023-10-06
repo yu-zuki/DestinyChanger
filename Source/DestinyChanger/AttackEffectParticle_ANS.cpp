@@ -1,12 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//制作日：2023/07/12　制作者：トウ　処理内容：攻撃時のエフェクト：粒子エフェクト
 
 
 #include "AttackEffectParticle_ANS.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
+//　UEがデフォルトのParticleの処理は1個しか生成できないので、
+//　3個のParticleを生成するために、以下のコードを追加（Superを使用せずにUEの処理を破棄 ）
+
 void UAttackEffectParticle_ANS::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
+	//Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+
 	// ensure deprecated path is called because a call to Super is not made
 	//PRAGMA_DISABLE_DEPRECATION_WARNINGS
 		//NotifyBegin(MeshComp, Animation, TotalDuration);

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//更新日：2023/07/17　更新者：トウ　更新内容：UIはずっとプレイヤーに向く処理の追加
 
 
 #include "Base_WidgetComponent.h"

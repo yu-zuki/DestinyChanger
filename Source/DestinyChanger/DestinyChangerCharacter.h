@@ -355,6 +355,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest", meta = (AllowPrivateAccess = "true"))
 	class UQuestSystem* QuestSystemComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Quest", meta = (AllowPrivateAccess = "true"))
+	class UQuestGiverComponent* QuestGiverrComponent;
+
+	//QuestSystemをコンプリートした時
+		void QuestSystemComplete(FName _ID);
+
 	//UI　Bind　QuestSystemt通知
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
 		void BindQuestSystemNotify(FName _Name);
@@ -363,6 +369,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
 		void BindQuestSystemNotifyComplete(FName _Name);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
+		void TaskCompletionBlueprintAction(FName _ID);
+
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UNiagaraComponent* GuardEffectCom;

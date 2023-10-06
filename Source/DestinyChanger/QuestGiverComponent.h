@@ -38,9 +38,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
 	FName QuestID;
 
+	//Quest‚ğ—^‚¦‚½ŒãAActor‚ğÁ‚·‚©‚Ç‚¤‚©
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
+	bool bIsDestroyAcotr;
+
 	//“üŒû
 	UFUNCTION(BlueprintCallable, Category = "Quest")
 	void GiveQuestToPlayer();
 
+	UFUNCTION(BlueprintCallable, Category = "Quest")
+	void GiveQuestToPlayerWithID(FName _QuestID);
 
 };

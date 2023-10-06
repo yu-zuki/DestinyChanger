@@ -17,7 +17,7 @@ UQuestGiverComponent::UQuestGiverComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	bIsDestroyAcotr = true;
 }
 
 
@@ -78,6 +78,40 @@ void UQuestGiverComponent::GiveQuestToPlayer()
 	InteractComponent->SetInteractObject(nullptr);
 
 	//DestroyActor
-	GetOwner()->Destroy();	
+	if (bIsDestroyAcotr) {
+		GetOwner()->Destroy();
+	}
+}
+
+void UQuestGiverComponent::GiveQuestToPlayerWithID(FName _QuestID)
+{
+	if (_QuestID.IsNone()) {
+		UE_LOG(LogTemp, Warning, TEXT("QuestID is None"));
+		return;
+	}
+
+	//GetPlayer
+	ADestinyChangerCharacter* Player = Cast<ADestinyChangerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player == nullptr) return;
+
+	//Find QuestSystem
+	UQuestSystem* QuestSystem = Player->FindComponentByClass<UQuestSystem>();
+	if (QuestSystem == nullptr) return;
+
+	//Add Quest to QuestSystem
+	QuestSystem->AddExecutingQuest(_QuestID);
+
+
+
+	UInteractComponent* InteractComponent = Player->FindComponentByClass<UInteractComponent>();
+	if (InteractComponent == nullptr) return;
+
+	InteractComponent->SetUIActive(false);
+	InteractComponent->SetInteractObject(nullptr);
+
+	//DestroyActor
+	if (bIsDestroyAcotr) {
+		GetOwner()->Destroy();
+	}
 }
 

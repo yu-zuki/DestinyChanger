@@ -1,5 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//制作日：2023/07/09　制作者：トウ　処理内容：攻撃の時、色んな便利な処理を行う
+//制作日：2023/07/09　制作者：トウ　更新内容：Characterが特定のActorに角度（向き）を修正する処理を追加
+//制作日：2023/07/09　制作者：トウ　更新内容：プレイヤーが敵を攻撃した際にHitStop処理を追加
+//制作日：2023/07/09　制作者：トウ　更新内容：プレイヤーが敵を攻撃した際にEffect処理を追加
 
 #include "AttackAssistComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -26,7 +28,13 @@ void UAttackAssistComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-/// \brief 攻撃の角度を最も近い敵に修正する。
+/**
+* @brief 攻撃角度を修正する関数
+* 
+* @details 最も近い敵を取得し、プレイヤーと敵の方向を計算してプレイヤーの向きを変更する
+* 
+* @return void
+*/
 void UAttackAssistComponent::CorrectAttackAngle()
 {
 	//機能使用するかどうかのチェック
@@ -50,6 +58,17 @@ void UAttackAssistComponent::CorrectAttackAngle()
 	}
 }
 
+/**
+ * @brief ヒットストップを発生させる
+ * 
+ * @details bUseHitStopがfalseなら処理を行わない。
+ *			Characterオブジェクトをキャストし、Animationの再生速度を_HitStopSpeedにする。
+ *			HitStopTime後に処理を終了する。
+ * 
+ * @param _HitStopSpeed ヒットストップの速度
+ * 
+ * @return なし
+ */
 void UAttackAssistComponent::HitStop(float _HitStopSpeed)
 {
 	//機能使用するかどうかのチェック
@@ -70,6 +89,17 @@ void UAttackAssistComponent::HitStop(float _HitStopSpeed)
 	TimerManager.SetTimer(TimerHandle_HitStop, this, &UAttackAssistComponent::HitStopProcess, HitStopTime, false);
 }
 
+/**
+ * @brief 攻撃エフェクトの生成
+ * 
+ * @details Niagaraシステムを生成して、攻撃の位置にスポーンする。
+ * 
+ * @param _NiagaraSystem 生成するNiagaraシステム
+ * 
+ * @param _HitLocation 攻撃の位置
+ * 
+ * @param _HitDirection 攻撃の方向
+ */
 void UAttackAssistComponent::HitEffect(UNiagaraSystem* _NiagaraSystem, FVector _HitLocation, FVector _HitDirection)
 {
 	//機能使用するかどうかのチェック
@@ -89,7 +119,11 @@ void UAttackAssistComponent::HitEffect(UNiagaraSystem* _NiagaraSystem, FVector _
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),_NiagaraSystem,_HitLocation,HitRotation,Scale);
 }
 
-/// \brief 最も近い敵を選択する
+///	@brief 最も近い敵を探す関数
+/// 
+///	@details ゲームワールド内の全ての敵を取得し、プレイヤーの位置との距離を算出し、最も近い敵を返します。
+/// 
+///	@return 最も近い敵のアクター	AActor * 
 AActor* UAttackAssistComponent::SelectNearestEnemy()
 {
 	if (EnemyBaseClass == nullptr)	{
@@ -126,6 +160,13 @@ AActor* UAttackAssistComponent::SelectNearestEnemy()
 	return nullptr;
 }
 
+/**
+ * @brief ヒットストップの処理
+ *
+ * @details Characterオブジェクトをキャストし、Animationの再生速度を1.0fにする。
+ *
+ * @return なし
+ */
 void UAttackAssistComponent::HitStopProcess()
 {
 	//CharacterGet

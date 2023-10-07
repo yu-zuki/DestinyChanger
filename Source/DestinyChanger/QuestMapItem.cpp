@@ -7,6 +7,8 @@
 #include "QuestGiverComponent.h"
 #include "DialogueManager.h"
 
+#include "MinimapPlugin/Public/MapIconComponent.h"	//Plugin
+
 AQuestMapItem::AQuestMapItem()
 {
 	QuestGiverComponent = CreateDefaultSubobject<UQuestGiverComponent>(TEXT("QuestGiverComponent"));
@@ -42,5 +44,25 @@ void AQuestMapItem::BeginPlay()
 
 	//会話が終わったの処理をBindする
 	DialogueManager->AddDialogueFinishedEventCall(this,&AQuestMapItem::GiveQuestToPlayer);
+}
+
+/**
+* @brief Actor を指定された value で隠したり表示したりします。
+*
+* @details true を指定すると隠され、false を指定すると表示されます。
+*
+* @param bool _isHidden 隠す/表示するかを指定する bool 値です。
+*/
+void AQuestMapItem::SetActorDeepHidden_Implementation(bool _isHidden)
+{
+	SetActorHiddenInGame(_isHidden);
+	SetActorEnableCollision(!_isHidden);
+	SetActorTickEnabled(!_isHidden);
+
+	//Get Component MapIcon
+	UMapIconComponent* MapIconComponent = Cast<UMapIconComponent>(GetComponentByClass(UMapIconComponent::StaticClass()));
+	if (MapIconComponent != nullptr) {
+		MapIconComponent->SetIconVisible(!_isHidden);
+	}
 }
 

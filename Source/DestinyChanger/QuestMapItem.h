@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MapItem.h"
+#include "QuestActorInterface.h"
 
 
 #include "QuestMapItem.generated.h"
@@ -12,7 +13,7 @@
  * 
  */
 UCLASS()
-class DESTINYCHANGER_API AQuestMapItem : public AMapItem
+class DESTINYCHANGER_API AQuestMapItem : public AMapItem ,public IQuestActorInterface
 {
 	GENERATED_BODY()
 
@@ -30,5 +31,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
 		void ActiveTargetActor();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+		void SetActorDeepHidden(bool _isHidden = true);
+
+	virtual void SetActorDeepHidden_Implementation(bool _isHidden) override;
 
 };

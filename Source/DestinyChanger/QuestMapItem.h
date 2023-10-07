@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "MapItem.h"
+
+
 #include "QuestMapItem.generated.h"
 
 /**
@@ -26,7 +28,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Quest")
 	void GiveQuestToPlayer();
 
-	//会話が終わったら、ターゲットのActorをスポーンする
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
-		void SpawnTargetActor();
+		void ActiveTargetActor();
+
 };

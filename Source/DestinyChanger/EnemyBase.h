@@ -1,7 +1,7 @@
 //制作日：2023/07/08　制作者：トウ　処理内容：敵の処理
 //制作日：2023/07/08　制作者：トウ　更新内容：敵の基本処理
 //更新日：2023/07/19　更新者：トウ　更新内容：敵の攻撃処理の追加
-
+//更新日：2023/10/07　更新者：トウ　更新内容：敵がクエストの討伐対象になるようにAPIを追加
 #pragma once
 
 #include "CoreMinimal.h"
@@ -9,11 +9,12 @@
 #include "DestinyChangerGameMode.h"
 #include "InputActionValue.h"
 #include "GameFramework/Character.h"
+#include "QuestActorInterface.h"
 
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class DESTINYCHANGER_API AEnemyBase : public ACharacter
+class DESTINYCHANGER_API AEnemyBase : public ACharacter, public IQuestActorInterface
 {
 	GENERATED_BODY()
 
@@ -130,4 +131,9 @@ protected:
 public:
 	// static ADestinyChangerGameMode* GameMode;
 	ADestinyChangerGameMode* GameMode;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+		void SetActorDeepHidden(bool _isHidden = true);
+
+	virtual void SetActorDeepHidden_Implementation(bool _isHidden) override;
 };

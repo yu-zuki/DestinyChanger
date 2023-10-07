@@ -21,8 +21,13 @@ AQuestMapItem::AQuestMapItem()
 */
 void AQuestMapItem::GiveQuestToPlayer()
 {
-	//クエストに使うActorをスポーンする
-	SpawnTargetActor();
+	//関連するアクターをActiveする
+	ActiveTargetActor();
+
+	if (QuestGiverComponent == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("QuestGiverComponent is nullptr"));
+		return;
+	}
 
 	//このメソッドはアクターをDestroyする
 	QuestGiverComponent->GiveQuestToPlayer();

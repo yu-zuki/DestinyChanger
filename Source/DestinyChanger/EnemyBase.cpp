@@ -1,4 +1,8 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿//制作日：2023/07/08　制作者：トウ　処理内容：敵の処理
+//制作日：2023/07/08　制作者：トウ　更新内容：敵の基本処理
+//更新日：2023/07/19　更新者：トウ　更新内容：敵の攻撃処理の追加
+//更新日：2023/10/07　更新者：トウ　更新内容：敵がクエストの討伐対象になるようにAPIを追加
+//制作日：2023/10/07　制作者：トウ　更新内容：QuestActorInterfaceのAPIを追加、クエストがActiveされた時のみEnemyもActiveするように機能を追加
 
 
 #include "EnemyBase.h"
@@ -14,6 +18,8 @@
 #include "Components/WidgetComponent.h"
 #include "CharacterBase_UMG.h"
 #include "Base_WidgetComponent.h"
+
+#include "MinimapPlugin/Public/MapIconComponent.h"
 
 
 //ADestinyChangerGameMode* AEnemyBase::GameMode = nullptr;	//初期化
@@ -232,5 +238,18 @@ inline ADestinyChangerGameMode* AEnemyBase::GetGameMode()
 	}
 
 	return GameMode;
+}
+
+void AEnemyBase::SetActorDeepHidden_Implementation(bool _isHidden)
+{
+	SetActorHiddenInGame(_isHidden);
+	SetActorEnableCollision(!_isHidden);
+	SetActorTickEnabled(!_isHidden);
+
+	//Get Component MapIcon
+	UMapIconComponent* MapIconComponent = Cast<UMapIconComponent>(GetComponentByClass(UMapIconComponent::StaticClass()));
+	if (MapIconComponent != nullptr) {
+		MapIconComponent->SetIconVisible( !_isHidden );
+	}
 }
 

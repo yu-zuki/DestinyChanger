@@ -197,7 +197,7 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
-		TSubclassOf<class UEnemyTargeting> EnemyTargeting_UMG;	// プレイヤーのメイン武器のクラス
+		TSubclassOf<class UEnemyTargeting> EnemyTargeting_UMG;	// 敵へのやじるし
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Battle", meta = (AllowPrivateAccess = "true"))
 		class UArrowComponent* EnemyDirectionIndicator;

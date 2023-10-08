@@ -20,13 +20,15 @@
 #include "Base_WidgetComponent.h"
 
 #include "MinimapPlugin/Public/MapIconComponent.h"
+#include <AIModule/Classes/AIController.h>
+#include <AIModule/Classes/BrainComponent.h>
 
 
 //ADestinyChangerGameMode* AEnemyBase::GameMode = nullptr;	//初期化
 
 // Sets default values
 AEnemyBase::AEnemyBase()
-	:HP(100.f), MaxHP(100.f), bIsAttacked(false)
+	:HP(100.f), MaxHP(100.f), bIsEnemyHidden(false), bIsAttacked(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	// Set size for collision capsule
@@ -73,7 +75,7 @@ void AEnemyBase::BeginPlay()
 	ADestinyChangerCharacter* PlayerCharacter = Cast< ADestinyChangerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if(PlayerCharacter)	{
 		EnemyDirectionIndicator = PlayerCharacter->ShowEnemyDirectionIndicator(this);
-		SetEnemyDirectionIndicatorActive(false);
+		EnemyDirectionIndicator->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	//HPUI Set Class
@@ -171,7 +173,9 @@ void AEnemyBase::ResetIsAttacked()
 
 void AEnemyBase::SetEnemyDirectionIndicatorActive(bool bIsActive)
 {
-	//return;
+	if( bIsEnemyHidden ){
+		return;
+	}
 
 	bIsActive ?
 	EnemyDirectionIndicator->SetVisibility(ESlateVisibility::Visible) :
@@ -240,16 +244,40 @@ inline ADestinyChangerGameMode* AEnemyBase::GetGameMode()
 	return GameMode;
 }
 
+/**
+* @brief アクタを完全に隠蔽する関数
+* 
+* @details アクタの各種設定を変更し、マップ上のアイコンも非表示にする
+* 
+* @param _isHidden true:隠蔽行う, false:表示行う
+* 
+* @return void
+*/
 void AEnemyBase::SetActorDeepHidden_Implementation(bool _isHidden)
 {
 	SetActorHiddenInGame(_isHidden);
 	SetActorEnableCollision(!_isHidden);
 	SetActorTickEnabled(!_isHidden);
 
+	//UIを表示するかどうか
+	bIsEnemyHidden = _isHidden;
+
 	//Get Component MapIcon
 	UMapIconComponent* MapIconComponent = Cast<UMapIconComponent>(GetComponentByClass(UMapIconComponent::StaticClass()));
 	if (MapIconComponent != nullptr) {
 		MapIconComponent->SetIconVisible( !_isHidden );
 	}
+
+	//AIコントローラーの　停止/起動　を行う
+	//AAIController* AIController = Cast<AAIController>(GetController());
+	//if (AIController != nullptr) {
+
+	//	//
+	//	UBrainComponent* BrainComponent = AIController->BrainComponent;
+	//	if (BrainComponent != nullptr) {
+	//		_isHidden ? BrainComponent->PauseLogic("Hidden") : BrainComponent->RestartLogic();
+	//	}
+	//}
+
 }
 

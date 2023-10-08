@@ -90,6 +90,9 @@ public:
 
 		class UUserWidget* EnemyDirectionIndicator;		//Enemyの方向を示すUI
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	bool bIsEnemyHidden;		//Enemyの方向を示すUIを隠すかどうか
+
 		//EnemyDirectionIndicatorのアクティブ
 		void SetEnemyDirectionIndicatorActive(bool bIsActive = true);
 

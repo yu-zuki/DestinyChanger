@@ -249,6 +249,8 @@ UIシステムは、プレイヤーのステータス、敵の方向を示す矢
 この部分では、敵の方向を赤い矢印でUI上に表示し、敵がプレイヤーに攻撃する際にのみ矢印が表示されます。また、敵のHPはプレイヤーに攻撃された際にのみ表示されます。
 
 - **敵の方向を示す矢印**
+
+![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
   
 ```cpp
 //ファイル：EnemyTargeting.cpp
@@ -298,6 +300,9 @@ FRotator UEnemyTargeting::GetLookAtRotationYaw()
 ```
 
 - **敵のHP　UI**
+
+![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
+  
 ```cpp
 //ファイル：Base_WidgetComponent.cpp
 void UBase_WidgetComponent::BeginPlay()
@@ -386,9 +391,65 @@ void UBase_WidgetComponent::SetHPInfo(float HP, float MaxHP)
 ```
 
 - **会話ウィンドウ**
+こちらの部分では話す人の名前と話す内容をセットする処理です。
+
+![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
 
 ```cpp
-//ファイル：
+//ファイル：Dialogue_UMG.h
+
+UCLASS()
+class DESTINYCHANGER_API UDialogue_UMG : public UUserWidget
+{
+	GENERATED_BODY()
+
+public:
+	//virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+public:
+	UPROPERTY(Meta = (BindWidget))
+		class UCanvasPanel* Canvas;
+
+	UPROPERTY(Meta = (BindWidget))
+		class UTextBlock* SpeakerName;
+
+	UPROPERTY(Meta = (BindWidget))
+		class UTextBlock* DialogueText;
+
+	//ぼかし
+	UPROPERTY(Meta = (BindWidget))
+		class UBackgroundBlur* Blur;
+	UPROPERTY(Meta = (BindWidget))
+		class UBackgroundBlur* BlurName;
+
+
+
+	//Set SpeakerName
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")
+		void SetSpeakerName(FText Name);
+
+	//Set DialogueText
+	UFUNCTION(BlueprintCallable, Category = "Dialogue")
+		void SetDialogueText(FText Text);
+	
+};
+
+void UDialogue_UMG::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+}
+
+void UDialogue_UMG::SetSpeakerName(FText Name)
+{
+	SpeakerName->SetText(Name);
+}
+
+void UDialogue_UMG::SetDialogueText(FText Text)
+{
+	DialogueText->SetText(Text);
+}
+
 
 ```
 

@@ -70,8 +70,164 @@ NPCとの対話を通じて、ストーリーが進行します。
 ## 4. ソースコードの説明とサンプル
 このセクションでは、重要なコードスニペットを共有し、それらが何を実現するのか、なぜそれが重要で効率的なのかを説明します。
 ### バトルシステムのコード部分
-```cpp
+攻撃処理、武器の装備、次のモーションへの切り替え、武器の当たり判定生成、回避処理、ダメージうけ処理、ガード処理などで組み合わせしています。多すぎるのでメインとなる攻撃処理のみ紹介させていただきます。
 
+- **プレイヤーは攻撃する時**
+まず、攻撃角度を調整し、攻撃フラグを有効にしてから、AnimMontageを再生します。特定のフレーム間でHitDetect関数を呼び出し、この関数内で武器ClassのCheckOverlap()メソッドを呼び出し、フレームごとにCapsuleコリジョンを生成します。このコリジョンが敵と交差した場合、ダメージを与えます。最適化のため、特定のフレーム間でのみ当たり判定を行っています。
+
+```cpp
+//ファイル：DestinyChangerCharacter.cpp
+
+/**
+ * @brief   LightAttackアクションのコールバックです。
+ *
+ * @details インタラクト可能オブジェクトがある場合はインタラクトを呼び出し終了する。
+ *			武器を持っていない場合は装備します。
+ *          武器を持っている場合、isAttackingフラグを立てて攻撃を開始し、攻撃コンボを1つカウントアップします。
+ *
+ * @param   Value InputActionValue
+ *
+ * @return  なし
+ */
+void ADestinyChangerCharacter::LightAttack(const FInputActionValue& Value)
+{
+	if (AActor* InteraObj = InteractComponent->GetInteractObject()) {
+		//Cast
+		if (IInteractableAPI* InteractableObject = Cast<IInteractableAPI>(InteraObj)) {
+			InteractableObject->Interact(this);
+			return;
+		}
+	}
+
+	//武器を持っている場合は武器の切り替えを行う
+	if (MainWeapon) {
+		if (MainWeapon->GetIsAttachToHand()) {												//武器を持っているかどうか
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			if (AnimInstance && AnimInstance->Montage_IsPlaying(AnimMontage_WeaponDraw))	//武器を装備するアニメーションを再生中ならreturn
+				return;
+
+			PlayAnimMontage(AnimMontage_WeaponDraw);										//持ってない場合、武器を装備するアニメーションを再生	
+			return;
+		}
+	}
+
+	//攻撃中ではない時のみ攻撃を行う
+	if (!bIsAttacking) {
+		//Attack Assist Componentで角度を修正
+		AttackAssistComponent->CorrectAttackAngle();
+
+		//play light attack animation
+		if (LightAttackMontageOne && LightAttackMontageTwo && LightAttackMontageThree && LightAttackMontageFour) {
+			switch (eAttackComb)
+			{
+			case EAttackComb::LightAttackOne:
+				PlayAnimMontage(LightAttackMontageOne);
+				break;
+			case EAttackComb::LightAttackTwo:
+				PlayAnimMontage(LightAttackMontageTwo);
+				break;
+			case EAttackComb::LightAttackThree:
+				PlayAnimMontage(LightAttackMontageThree);
+				break;
+			case EAttackComb::LightAttackFour:
+				PlayAnimMontage(LightAttackMontageFour);
+				break;
+			}		
+
+			bIsAttacking = true;	//set attacking to true
+			LightAttackCountUp();	//次の攻撃に備えてカウントアップ
+		}
+	}
+
+}
+
+void ADestinyChangerCharacter::HitDecect()
+{
+	//hit detect
+	MainWeapon->CheckOverlap();
+}
+```
+
+```cpp
+//ファイル：Attacking_AN.cpp
+
+void UAttacking_AN::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
+{
+	//PlayerGet
+	ADestinyChangerCharacter* Player = Cast<ADestinyChangerCharacter>(MeshComp->GetOwner());
+	if (Player)	{
+		Player->HitDecect();
+	}
+}
+```
+
+```cpp
+//ファイル：BaseWeapon.cpp
+
+//チェック
+void ABaseWeapon::CheckOverlap()
+{
+	TArray<FHitResult> HitResults;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+
+	FVector Start = WeaponCollision->GetComponentLocation();
+	FVector End = Start;// + GetActorForwardVector() * 100.0f;
+	FQuat Rot = WeaponCollision->GetComponentQuat();			// 
+	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(WeaponCollision->GetScaledCapsuleRadius(), WeaponCollision->GetScaledCapsuleHalfHeight());
+
+	bool isHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, Rot, ECollisionChannel::ECC_GameTraceChannel1, CollisionShape, CollisionParams);
+	
+	//if (isHit != true) { return; }
+
+	if (false)	{
+		DrawDebugCapsule(GetWorld(), (Start + End) / 2,
+			CollisionShape.GetCapsuleHalfHeight(),
+			CollisionShape.GetCapsuleRadius(), Rot, FColor::Red, true, -1.0f, 0, 1.0f);
+	}
+
+	for (FHitResult HitResult : HitResults)	{
+		EnemyOnOverlap(HitResult);
+	}
+}
+
+void ABaseWeapon::EnemyOnOverlap(FHitResult& _HitResult)
+{
+	//Cast
+	AEnemyBase* Enemy = Cast<AEnemyBase>(_HitResult.GetActor());
+	if (Enemy) {
+		if (Enemy->bIsAttacked) {
+			return;
+		}
+
+		AActor* Player = GetOwner();			
+		if (Player) {
+			ADestinyChangerCharacter* DestinyChangerCharacter = Cast<ADestinyChangerCharacter>(Player);
+
+			/////////////////////////////////////////
+			//敵にダメージを与える
+			Enemy->Damage(fAttackPower * DestinyChangerCharacter->GetPower());
+
+
+			/////////////////////////////////////////
+			//プレイヤーのヒットストップ処理
+			FVector HitLocation = _HitResult.Location;		//ヒットエフェクトの位置
+
+			if (DestinyChangerCharacter) {
+				DestinyChangerCharacter->GetAttackAssistComponent()->HitStop();
+				DestinyChangerCharacter->GetAttackAssistComponent()->HitEffect(HitEffect,HitLocation,GetActorForwardVector());
+			}
+		}
+		//Debug
+		FQuat Rotation = FQuat::Identity;
+		FVector Extent = FVector(5, 5, 5);
+
+		//DrawDebugBox(GetWorld(), HitLocation, Extent, Rotation, FColor::Green, false, 5.0f, 0, 1.0f);
+		//Enemyの名前とHPをPrintStringで表示
+		FString OutputString = FString::Printf(TEXT("Enemy: %s, Health: %f"), *Enemy->GetName(), Enemy->GetHP());
+		UKismetSystemLibrary::PrintString(this, OutputString);
+	}
+}
 ```
 
 ### ディスティニーシステムに関連する主要なコードの部分です。
@@ -389,7 +545,7 @@ void UBase_WidgetComponent::SetHPInfo(float HP, float MaxHP)
 ```
 
 - **会話ウィンドウ**
-こちらの部分では話す人の名前と話す内容をセットする処理です。
+このコンポーネントでは、話す人の名前と会話内容を設定する処理を行っています。
 
 ![Blackboardのスクリーンショット](Document/QuestSpeaker.png)
 

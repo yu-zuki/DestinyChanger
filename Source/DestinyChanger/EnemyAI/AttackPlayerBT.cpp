@@ -51,7 +51,7 @@ EBTNodeResult::Type UAttackPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 void UAttackPlayerBT::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	if (bIsAttackEnd)	{
-		//Stateをプレイヤーを攻撃する状態に変更
+		//Stateをプレイヤーをプレイヤーに追跡の状態に変更
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum("EnemyState", (uint8)EEnemyState::Chase);
 
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);

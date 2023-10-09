@@ -137,7 +137,7 @@ void ADestinyChangerCharacter::Tick(float DeltaTime)
 /**
  * @brief   LightAttackアクションのコールバックです。
  *
- * @details アタックアシストがヒットした場合、インタラクト可能オブジェクトがある場合はインタラクトを呼び出し終了する。
+ * @details インタラクト可能オブジェクトがある場合はインタラクトを呼び出し終了する。
  *			武器を持っていない場合は装備します。
  *          武器を持っている場合、isAttackingフラグを立てて攻撃を開始し、攻撃コンボを1つカウントアップします。
  *

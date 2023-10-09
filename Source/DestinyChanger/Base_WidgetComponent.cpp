@@ -14,8 +14,8 @@ void UBase_WidgetComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-	SetWidgetSpace(EWidgetSpace::World);
+	//ƒ[ƒ‹ƒh‚Å•\¦‚·‚é
+	SetWidgetSpace(EWidgetSpace::World);	
 	if (WidgetClass != nullptr)	{
 		SetWidgetClass(WidgetClass);
 	}

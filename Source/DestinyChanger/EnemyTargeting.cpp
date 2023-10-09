@@ -18,12 +18,12 @@ void UEnemyTargeting::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	if (Enemy == nullptr || PlayerArrow == nullptr) {
-		RemoveFromParent();
+		RemoveFromParent();	//敵とプレイヤーがいないなら削除
 		return;
 	}
 
 	FRotator Rotator = GetLookAtRotationYaw();
-	TargetingImage->SetRenderTransformAngle(Rotator.Yaw);
+	TargetingImage->SetRenderTransformAngle(Rotator.Yaw);	//敵の向きとプレイヤーの方向の差分を取得し、UIの角度を変更する
 }
 
 void UEnemyTargeting::Init(AActor* _Enemy, UArrowComponent* _PlayerArrow)

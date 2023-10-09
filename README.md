@@ -765,8 +765,301 @@ void UDialogueManager::EnterDialogue(AActor* _Caller)
 ```
 
 ### クエストシステムのコード部分
+クエストシステムは、プレイヤーに追加された`QuestSystem`コンポーネント、`QuestActorInterface`を継承したActor、そして`ItemGiverComponent`および`QuestGiverComponent`で構成されています。
+
+- **QuestSystemコンポーネント**:
+  こちらはクエストの構造やクエストクラスの管理を行うコンポーネントです。
+
+- **QuestActorInterfaceを継承したActor**:
+  このActorはクエストが達成された時に、次のクエストをアクティブにできるクラスです。
+
+- **ItemGiverComponentおよびQuestGiverComponent**:
+  `ItemGiverComponent`はアイテムをプレイヤーのバッグに与えるクラスで、`QuestGiverComponent`はプレイヤーの`GameSystem`コンポーネントにクエストを追加するクラスです。
+
+内容が多いため、以下では`QuestSystem`コンポーネントのみを紹介します。
+
+
 ```cpp
-//ファイル：
+//ファイル：QuestSystem.h
+
+DECLARE_DELEGATE_OneParam(NotifyExecutingQuest, FName);
+DECLARE_DELEGATE_OneParam(NotifyExecutingQuestComplete, FName);//クエストが完了した時に呼び出すデリゲート
+
+//クエストの会話
+USTRUCT(BlueprintType)
+struct FQuestDialogue
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエスト受注時の会話
+	FText AcceptDialogue;		
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエスト提出時の会話
+	FText SubmitDialogue;		
+};
+
+//クエストの種類
+UENUM(BlueprintType)
+enum class EQuestType : uint8
+{
+	DefeatEnemy UMETA(DisplayName = "DefeatEnemy"),	//敵を倒す
+	CollectItem UMETA(DisplayName = "CollectItem"),	//アイテムを集める
+	TalkToNPC UMETA(DisplayName = "TalkToNPC")		//NPCと会話する
+};
+
+
+//クエストの詳細
+USTRUCT(BlueprintType)
+struct FQuestDetail
+{
+	GENERATED_BODY()
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエストID
+		FName ID;				
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//報酬経験値
+		int32 RewardExp;		
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//報酬アイテム
+		TMap<FName, int32> RewardItems;		
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエストの説明
+		FText Description;		
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエストの種類
+		EQuestType QuestType;	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//必要な数
+		int32 NeedNum;			
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) //必要なターゲットID
+		FName NeedTargetID;		
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//提出するターゲットID
+		FName SubmitTargetID;	
+};
+
+//クエストの構造
+USTRUCT(BlueprintType)
+struct FQuestStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエスト名
+		FText QuestName;				
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエスト内容
+		FText QuestContent;				
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエストの簡単な説明
+		FText ShortDescription;			
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエストの詳細
+		FQuestDetail QuestDetail;		
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエストの会話
+		FQuestDialogue QuestDialogue;	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)	//クエストを受注するための条件
+		FName ActiveCondition;			
+};
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class DESTINYCHANGER_API UQuestSystem : public UActorComponent
+{
+	GENERATED_BODY()
+
+	//GetPlayer
+	class ADestinyChangerCharacter* GetPlayer();
+
+protected:
+	//アクティブなクエスト
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TArray<FName> ActiveQuests;
+	//クリアしたクエスト
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TArray<FName> CompletedQuests;
+	//実行中のクエスト
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TArray<FName> ExecutingQuests;
+	//クエストアイテム
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TMap<FName, int32> QuestItems;
+	//敵を倒した記録
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TMap<FName, int32> DefeatRecords;
+
+////////////////////////////////////////////////////////////////////////////////////
+public:
+	//　受注可能なクエストを追加する
+	UFUNCTION(BlueprintCallable)
+		void AddActiveQuest(FName QuestID);
+
+	//　クエストをクリアする
+	UFUNCTION(BlueprintCallable)
+		void AddCompletedQuest(FName QuestID);
+
+	//　実行中のクエストを追加する
+	UFUNCTION(BlueprintCallable)
+		void AddExecutingQuest(FName QuestID);
+
+	//　クエストアイテムを追加する
+	UFUNCTION(BlueprintCallable)
+		void AddQuestItem(FName ItemID, int32 Num);
+
+	//　敵を倒した記録を追加する
+	UFUNCTION(BlueprintCallable)
+		void AddDefeatRecord(FName EnemyID, int32 Num);
+
+	template <typename ObjectType, typename MethodType>
+	void BindUINotifyExecutingQuest(ObjectType* Object, MethodType Method)
+	{
+		UINotifyExecutingQuest.BindUObject(Object, Method);
+	}
+
+	//実行中のクエストを完了したことを通知
+	NotifyExecutingQuestComplete NotifyExecutingQuestComplete;
+
+	template <typename ObjectType, typename MethodType>
+	void BindNotifyExecutingQuestComplete(ObjectType* Object, MethodType Method)
+	{
+		NotifyExecutingQuestComplete.BindUObject(Object, Method);
+	}
+
+	//クエストをコンプリートした後の処理
+	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
+		void CompleteQuest(FName QuestID);
+};
+
+ADestinyChangerGameMode* UQuestSystem::GetGameMode()
+{
+	if (GetWorld() == nullptr) return nullptr;
+
+	if (GameMode == nullptr) {
+		GameMode = Cast<ADestinyChangerGameMode>(GetWorld()->GetAuthGameMode());
+		return GameMode;
+	}
+
+	return GameMode->IsValidLowLevel() ? GameMode : GameMode = Cast<ADestinyChangerGameMode>(GetWorld()->GetAuthGameMode());
+
+}
+
+void UQuestSystem::AddActiveQuest(FName QuestID)
+{
+	//QuestDatabaseからクエストが存在するか確認する
+	if( !GetGameMode()->GetQuestDatabase()->QuestExists(QuestID) ) return;
+
+	//アクティブのクエストを追加する
+	ActiveQuests.Add(QuestID);
+
+	//実行中のクエストに追加する
+	AddExecutingQuest(QuestID);
+}
+
+void UQuestSystem::AddCompletedQuest(FName QuestID)
+{
+	//完成のクエストを追加する
+	CompletedQuests.Add(QuestID);
+
+	//アクティブのクエストから削除する
+	ActiveQuests.Remove(QuestID);
+
+	//実行中のクエストから削除する
+	ExecutingQuests.Remove(QuestID);
+
+	//Print
+	UE_LOG(LogTemp, Warning, TEXT("Completed Quest: %s"), *QuestID.ToString());
+
+	//クエストを完成したことを通知する
+	NotifyExecutingQuestComplete.ExecuteIfBound(QuestID);
+
+	//Expを追加する
+	GetGameMode()->AddExp( GetGameMode()->GetQuestDatabase()->GetQuest(QuestID).QuestDetail.RewardExp );
+}
+
+void UQuestSystem::AddExecutingQuest(FName QuestID)
+{
+	//実行中のクエストを追加する
+	ExecutingQuests.Add(QuestID);
+
+	//実行中のクエストを追加したことを通知する
+	UINotifyExecutingQuest.ExecuteIfBound(QuestID);
+
+}
+
+void UQuestSystem::AddQuestItem(FName ItemID, int32 Num)
+{
+	//ItemBaseからアイテムが存在するか確認する
+	if (!GetGameMode()->GetItemDatabase()->ItemExists(ItemID)) return;
+
+	//QuestItemsにアイテムを追加する
+	QuestItems.Add(ItemID, QuestItems.FindRef( ItemID ) + Num);
+
+	//アイテムの数がクエストの数を超えたら、クエストを完成する。
+	//そのため、全てのクエストを確認する
+	for (auto& QuestID : ExecutingQuests) {
+		//QuestDatabaseからクエストを取得する
+		FQuestStruct Quest = GetGameMode()->GetQuestDatabase()->GetQuest(QuestID);
+
+		//クエストのアイテムがQuestItemsに存在するか確認する
+		if (Quest.QuestDetail.NeedNum > 0) {
+
+			int32 tmp_NowNum = QuestItems.FindRef(Quest.QuestDetail.NeedTargetID);
+			int32 tmp_NeedNum = Quest.QuestDetail.NeedNum;
+			//クエストのアイテムの数がQuestItemsの数を超えたら、クエストを完成する
+			if (tmp_NowNum >= tmp_NeedNum){
+				AddCompletedQuest(QuestID);
+			}
+		}
+	}
+}
+
+TArray<FQuestStruct> UQuestSystem::GetActiveQuests()
+{	
+	//QuestDatabaseからアクティブクエストを取得する
+	TArray<FQuestStruct> Quests;
+	for (auto& QuestID : ActiveQuests) {
+		Quests.Add(GetGameMode()->GetQuestDatabase()->GetQuest(QuestID));
+	}
+	return Quests;
+}
+
+TArray<FQuestStruct> UQuestSystem::GetCompletedQuests()
+{
+	//QuestDatabaseから完成クエストを取得する
+	TArray<FQuestStruct> Quests;
+	for (auto& QuestID : CompletedQuests) {
+		Quests.Add(GetGameMode()->GetQuestDatabase()->GetQuest(QuestID));
+	}
+	return Quests;
+}
+
+TArray<FQuestStruct> UQuestSystem::GetExecutingQuests()
+{
+	//QuestDatabaseから実行中クエストを取得する
+	TArray<FQuestStruct> Quests;
+	for (auto& QuestID : ExecutingQuests) {
+		Quests.Add(GetGameMode()->GetQuestDatabase()->GetQuest(QuestID));
+	}
+	return Quests;
+}
+
+int32 UQuestSystem::GetQuestItems(FName ItemID)
+{
+	//QuestItems からアイテムの数を取得する
+	return QuestItems.FindRef(ItemID);
+}
+
+int32 UQuestSystem::GetDefeatRecords(FName ItemID)
+{
+	//DefeatRecords から敵の数を取得する
+	return DefeatRecords.FindRef(ItemID);
+}
 
 ```
 

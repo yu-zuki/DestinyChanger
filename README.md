@@ -55,7 +55,7 @@
 
 [→エネミーシステムのコードを参照](#エネミーシステムのコード部分)
 
-![動画](Document/Destiny.gif)
+![動画](Document/Enemy.gif)
 
 
 ### UIシステム

@@ -77,6 +77,7 @@ NPCとの対話を通じて、ストーリーが進行します。
 ### ディスティニーシステムに関連する主要なコードの部分です。
 
 ```cpp
+//ファイル：DestinyChangerCharacter.h
 protected:
 	//DestinySystem一回起動すると増える時間
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DestinySystem", meta = (AllowPrivateAccess = "true"))
@@ -139,7 +140,9 @@ protected:
   
 この処理では、Enemyがプレイヤーに攻撃し、攻撃アニメーションが終了するとプレイヤーの追跡ステートに切り替わります。
 
-```AttackPlayerBT.cpp
+```cpp
+//ファイル：AttackPlayerBT.cpp
+
 EBTNodeResult::Type UAttackPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	bIsAttackEnd = false;
@@ -200,7 +203,8 @@ UIシステムは、プレイヤーのステータス、敵の方向を示す矢
   
 ![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
 
-```DestinyChangerCharacter.h
+```cpp
+//ファイル：DestinyChangerCharacter.h
 //////////////////////////////////////////////////////////////////////////
 //UI
 	////UI Class
@@ -246,7 +250,8 @@ UIシステムは、プレイヤーのステータス、敵の方向を示す矢
 
 - **敵の方向を示す矢印**
   
-```EnemyTargeting.cpp
+```cpp
+//ファイル：EnemyTargeting.cpp
 void UEnemyTargeting::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
@@ -294,7 +299,8 @@ FRotator UEnemyTargeting::GetLookAtRotationYaw()
 ``
 
 - **敵のHP　UI**
-```Base_WidgetComponent.cpp
+```cpp
+//ファイル：Base_WidgetComponent.cpp
 void UBase_WidgetComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -383,11 +389,13 @@ void UBase_WidgetComponent::SetHPInfo(float HP, float MaxHP)
 - **会話ウィンドウ**
 
 ```cpp
+//ファイル：
 
-``
+```
 
 ### 会話システムのコード部分
 ```cpp
+//ファイル：
 
 ```
 
@@ -398,6 +406,7 @@ void UBase_WidgetComponent::SetHPInfo(float HP, float MaxHP)
 
 ### クエストシステムのコード部分
 ```cpp
+//ファイル：
 
 ```
 

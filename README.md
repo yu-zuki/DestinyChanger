@@ -25,6 +25,64 @@
 
 - **打撃感**: 敵を攻撃する際、ヒットストップが発生し、敵に微かな移動が発生することで、打撃のリアルな感覚を提供します。
 
+### デスティニーシステム  
+ディスティニーシステムは、プレイヤーが敵の攻撃をガードした際に、一時的にプレイヤーの攻撃力を増加させるシステムです。攻撃力の増加倍率は、時間の経過とともに徐々に減少します。また、このシステムの効果時間には上限が存在します。
+
+ディスティニーシステムは、プレイヤーが敵の攻撃をガードした際に、一時的にプレイヤーの攻撃力を増加させるシステムです。攻撃力の増加倍率は、時間の経過とともに徐々に減少します。また、このシステムの効果時間には上限が存在します。
+
+以下は、ディスティニーシステムに関連する主要なコードの部分です。
+
+```cpp
+protected:
+	//DestinySystem一回起動すると増える時間
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DestinySystem", meta = (AllowPrivateAccess = "true"))
+		float fDestinySystemAddTime;
+	
+	//DestinySystemの最大時間
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DestinySystem", meta = (AllowPrivateAccess = "true"))
+		float fDestinySystemTimeMax;
+
+	//DestinySystemが一回発動
+	void ExecuteDestinySystem();
+
+	//タイマーに設定する時間
+	float fDestinySystemTimerLength = 0.f;
+
+	//タイマーに設定する時間を増やす
+	void AddDestinySystemTimerLength();
+
+	//TimerHandle
+	FTimerHandle DestinySystemTimerHandle;
+
+	//AttackPowerReset
+	void AttackPowerReset();
+
+	//Create AttackPowerReset Timer
+	void CreateAttackPowerResetTimer();
+
+	//AttackPowerの倍率
+	float fDefaultAttackPowerRatio = 2.1f;
+
+	float fAttackPowerRatio;
+
+	//AttackPowerの倍率をリセット
+	void AttackPowerRatioReset();
+
+	//Get AttackPowerRatio
+	float GetAttackPowerRatio();
+```
+
+機能詳細:
+- **DestinySystemの起動時の時間増加**: `fDestinySystemAddTime` は、ディスティニーシステムが一度起動すると増加する時間を指定します。
+- **DestinySystemの最大時間**: `fDestinySystemTimeMax` は、ディスティニーシステムの効果が継続する最大時間を定義します。
+- **DestinySystemの実行**: `ExecuteDestinySystem()` 関数は、ガード成功時に攻撃力を倍増させる処理を行います。
+- **タイマーの設定時間の追加**: `AddDestinySystemTimerLength()` 関数は、ディスティニーシステムの効果時間を増加させる処理を行います。
+- **攻撃力のリセット**: `AttackPowerReset()` 関数は、ディスティニーシステムの効果が終了した際に、攻撃力の倍率を元に戻す処理を行います。
+- **攻撃力倍率の取得**: `GetAttackPowerRatio()` 関数は、現在の攻撃力の倍率を取得する処理を行います。
+
+
+
+このシステムは、プレイヤーが戦略的なガードを成功させた際に、一時的な攻撃力のブーストを提供することで、ゲームプレイのダイナミクスを高める効果が期待されます。
 
 エネミーシステム: さまざまな種類の敵キャラクターがゲーム内に登場します。それぞれに独自の攻撃パターンと戦略があります。（まだ1種類しか実装してません。）
 

@@ -129,13 +129,14 @@ protected:
 
 今回、Behavior TreeのBlackboardにはEnemyのステートのみが含まれており、各TaskNodeの処理やステートの切り替えは全てC++側で制御されています。
 
-- **エネミーアイのBehavior Treeの処理**
+- **エネミーAIのBehavior Treeの処理**
 ![Behavior Treeのスクリーンショット](Document/EnemyAIBT.png)
 
-- **エネミーアイのBlackboardの構造**
+- **エネミーAIのBlackboardの構造**
 ![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
 
-- **エネミーアイのTaskNode処理の一例**
+- **エネミーAIのTaskNode処理の一例**
+- 
 この処理では、Enemyがプレイヤーに攻撃し、攻撃アニメーションが終了するとプレイヤーの追跡ステートに切り替わります。
 
 ```AttackPlayerBT.cpp

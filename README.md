@@ -611,9 +611,157 @@ void UDialogue_UMG::SetDialogueText(FText Text)
 ```
 
 ### 会話システムのコード部分
-```cpp
-//ファイル：
+この部分では、DialogueNodeの構造では、話す人の名前と話す内容となっております。DialogueManagerコンポーネントが配列のDialogueNodeを使用して、会話の内容をＵＩに送り込む。そして、デリゲートを使って関数ポインタを保存して、会話が終了の時に何か（Destoryとか）のメソッドを呼び出し。
 
+```cpp
+//ファイル：DialogueManager.h/cpp
+
+//会話の構造
+USTRUCT(BlueprintType)
+struct FDialogueNode
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+		FText SpeakerName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+		FText DialogueText;
+};
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+		TArray<FDialogueNode> DialogueData; // 会話データ
+
+	//Flag
+	bool bIsDialogueActive; // 会話がアクティブかどうか
+
+public:
+	//入口
+	void EnterDialogue(AActor* _actor = nullptr); // 会話に入る
+
+	//GetFlag
+	bool GetIsDialogueActive() const { return bIsDialogueActive; } // 会話がアクティブかどうかを取得する
+		
+//////////////////////////////////////////////////////////////////////////
+//Delegate
+public:
+	DialogueFinishedDelegate DialogueFinished; // 会話が終わった時のデリゲート
+
+	template <typename ObjectType, typename MethodType>
+	void AddDialogueFinishedEventCall(ObjectType* Object, MethodType Method)
+	{
+		DialogueFinished.AddUObject(Object, Method);
+	}
+
+
+
+/**
+ * 会話を開始します。
+ */
+void UDialogueManager::StartDialogue()
+{
+	//会話開始
+	bIsDialogueActive = true;
+
+	//　indexを初期化する
+	CurrentDialogueIndex = 0;
+
+	// プレイヤーの移動入力を無効化する
+	APlayerController* PlayerController =  GetWorld()->GetFirstPlayerController();
+	if (PlayerController)	{
+		PlayerController->SetIgnoreMoveInput(true);
+	}
+
+	//　会話ウィジェットを表示する
+	DialogueWidget->SetVisibility(ESlateVisibility::Visible);
+
+	//　次の会話TEXTを表示する
+	ShowNextDialogue();
+
+}
+
+/**
+ * 現在のダイアログがあるかどうかを返します。
+ *
+ * @return ダイアログの有無
+ */
+bool UDialogueManager::HasDialogueToDisplay() const
+{
+	return DialogueData.IsValidIndex(CurrentDialogueIndex);
+}
+
+/**
+ * 現在の会話の次のノードを表示します。
+ */
+void UDialogueManager::ShowNextDialogue()
+{
+	if (HasDialogueToDisplay())	{
+		FDialogueNode CurrentNode = GetNextDialogueNode();
+
+		if (!CurrentNode.SpeakerName.IsEmpty()) {
+			//　会話ウィジェットに会話データをセットする
+			DialogueWidget->SetSpeakerName(CurrentNode.SpeakerName);
+			DialogueWidget->SetDialogueText(CurrentNode.DialogueText);
+		}
+	}
+	else	{
+		//会話終了
+		bIsDialogueActive = false;
+
+		//　会話が終わったらプレイヤーの移動入力を有効化する
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (PlayerController)		{
+			PlayerController->ResetIgnoreMoveInput();
+		}
+		//　会話が終わったら会話ウィジェットを非表示にする
+		DialogueWidget->SetVisibility(ESlateVisibility::Hidden);
+
+		//　会話が終わったらDelegateを呼び出す
+		if (DialogueFinished.IsBound())		{
+			DialogueFinished.Broadcast();
+		}
+
+	}
+}
+
+/**
+ * 現在の(次の)ダイアログの説明を返します。
+ *
+ * @return 現在の(次の)ダイアログの説明
+ */
+FDialogueNode UDialogueManager::GetNextDialogueNode()
+{
+	if (DialogueData.IsValidIndex(CurrentDialogueIndex))	{
+		CurrentDialogueIndex++;
+		return DialogueData[CurrentDialogueIndex - 1];
+	}
+	else	{
+		FDialogueNode EmptyNode;
+		return EmptyNode;
+	}
+}
+
+/**
+ * キャラクターが会話に入った場合、
+ * そのキャラクターがUInteractComponentを持っている場合は、UIの表示を隠します。
+ *
+ * @param _Caller キャラクターのアクターオブジェクト
+ */
+void UDialogueManager::EnterDialogue(AActor* _Caller)
+{
+
+	if (_Caller != nullptr) {
+		_Caller->FindComponentByClass<UInteractComponent>()->SetUIActive(!bIsDialogueActive);
+	}
+
+	if (!bIsDialogueActive) {
+		StartDialogue();
+	}
+	else {
+		ShowNextDialogue();
+	}
+
+}
 ```
 
 ### クエストシステムのコード部分

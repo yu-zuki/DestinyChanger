@@ -125,16 +125,19 @@ protected:
 - **攻撃力倍率の取得**: `GetAttackPowerRatio()` 関数は、現在の攻撃力の倍率を取得する処理を行います。
 
 ### エネミーシステムのコード部分
-エネミー部分の構造では、Behavior Tree、AIController、Blackboard（AIのデータ）、AnimNotifyState（アニメーションが特定フレームの時の通知）、TaskNote（Taskの処理）の５つです。
-今回ではBehavior TreeのBlackboardはEnemyのステートしかないでの、各TaskNoteの処理やステートに切り替えは全部Ｃ＋＋側で抑えました。
+エネミーシステムの構造は、Behavior Tree、AIController、Blackboard（AIのデータ）、AnimNotifyState（アニメーションが特定フレーム時の通知）、およびTaskNode（Taskの処理）の5つのコンポーネントから構成されています。
 
-- **エネミーAIのBehavior Treeの処理**
+今回、Behavior TreeのBlackboardにはEnemyのステートのみが含まれており、各TaskNodeの処理やステートの切り替えは全てC++側で制御されています。
+
+- **エネミーアイのBehavior Treeの処理**
 ![Behavior Treeのスクリーンショット](Document/EnemyAIBT.png)
 
-- **エネミーAIのBlackboardの構造**
+- **エネミーアイのBlackboardの構造**
 ![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
 
-- **エネミーAIのTaskNote処理の一例**
+- **エネミーアイのTaskNode処理の一例**
+この処理では、Enemyがプレイヤーに攻撃し、攻撃アニメーションが終了するとプレイヤーの追跡ステートに切り替わります。
+
 ```AttackPlayerBT.cpp
 EBTNodeResult::Type UAttackPlayerBT::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {

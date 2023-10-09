@@ -129,10 +129,10 @@ protected:
 今回ではBehavior TreeのBlackboardはEnemyのステートしかないでの、各TaskNoteの処理やステートに切り替えは全部Ｃ＋＋側で抑えました。
 
 - **エネミーAIのBehavior Treeの処理**
-![Behavior Treeのスクリーンショット](Document/ARPG.png)
+![Behavior Treeのスクリーンショット](Document/EnemyAIBT.png)
 
 - **エネミーAIのBlackboardの構造**
-![Blackboardのスクリーンショット](Document/ARPG.png)
+![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
 
 - **エネミーAIのTaskNote処理の一例**
 ```AttackPlayerBT.cpp

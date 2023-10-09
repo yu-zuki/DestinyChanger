@@ -50,33 +50,40 @@ void ABaseWeapon::OnUnequipped()
 
 }
 
-//チェック
+//チェック　当たり判定用のコリジョンを生成
 void ABaseWeapon::CheckOverlap()
 {
-	TArray<FHitResult> HitResults;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
+	TArray<FHitResult> HitResults;				//ヒットしたものを格納する配列
+	FCollisionQueryParams CollisionParams;	
+	CollisionParams.AddIgnoredActor(this);		//自分自身を無視する
 
-	FVector Start = WeaponCollision->GetComponentLocation();
-	FVector End = Start;// + GetActorForwardVector() * 100.0f;
-	FQuat Rot = WeaponCollision->GetComponentQuat();			// 
+	FVector Start = WeaponCollision->GetComponentLocation();	//生成したコリジョンの中心位置
+	FVector End = Start;// + GetActorForwardVector() * 100.0f;　
+	FQuat Rot = WeaponCollision->GetComponentQuat();			//生成したコリジョンの向き
+
+	//コリジョンの形状を取得（　武器クラスで作ったカプセルコンポーネントから　）
 	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(WeaponCollision->GetScaledCapsuleRadius(), WeaponCollision->GetScaledCapsuleHalfHeight());
 
+
+	//当たり判定を行う、ヒットしたものをHitResultsに格納
 	bool isHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, Rot, ECollisionChannel::ECC_GameTraceChannel1, CollisionShape, CollisionParams);
 	
 	//if (isHit != true) { return; }
 
+	//Debug
 	if (false)	{
 		DrawDebugCapsule(GetWorld(), (Start + End) / 2,
 			CollisionShape.GetCapsuleHalfHeight(),
 			CollisionShape.GetCapsuleRadius(), Rot, FColor::Red, true, -1.0f, 0, 1.0f);
 	}
 
+	//HitResultsに格納されたものを一つずつ処理
 	for (FHitResult HitResult : HitResults)	{
 		EnemyOnOverlap(HitResult);
 	}
 }
 
+//敵との当たり判定
 void ABaseWeapon::EnemyOnOverlap(FHitResult& _HitResult)
 {
 	//Cast

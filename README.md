@@ -201,7 +201,7 @@ UIシステムは、プレイヤーのステータス、敵の方向を示す矢
 - **プレイヤーのステータス**
 この部分では、プレイヤーのステータスを取得し、Blueprint側でデータを受け取る処理を行っています。
   
-![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
+![Blackboardのスクリーンショット](Document/PlayerUI.png)
 
 ```cpp
 //ファイル：DestinyChangerCharacter.h
@@ -250,7 +250,7 @@ UIシステムは、プレイヤーのステータス、敵の方向を示す矢
 
 - **敵の方向を示す矢印**
 
-![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
+![Blackboardのスクリーンショット](Document/EnemyTargeting.png)
   
 ```cpp
 //ファイル：EnemyTargeting.cpp
@@ -300,8 +300,6 @@ FRotator UEnemyTargeting::GetLookAtRotationYaw()
 ```
 
 - **敵のHP　UI**
-
-![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
   
 ```cpp
 //ファイル：Base_WidgetComponent.cpp
@@ -393,7 +391,7 @@ void UBase_WidgetComponent::SetHPInfo(float HP, float MaxHP)
 - **会話ウィンドウ**
 こちらの部分では話す人の名前と話す内容をセットする処理です。
 
-![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
+![Blackboardのスクリーンショット](Document/QuestSpeaker.png)
 
 ```cpp
 //ファイル：Dialogue_UMG.h

@@ -63,7 +63,7 @@ NPCとの対話を通じて、ストーリーが進行します。
 [→クエストシステムのコードを参照](#クエストシステムのコード部分)
 
 （各モジュールの説明写真）
-![スクリーンショット](screenshot_url.png)  
+![簡単な説明図](//github.com/yu-zuki/DestinyChanger/blob/README%E3%80%81ADD/Document/ARPG.png)
 
 
 ## 4. ソースコードの説明とサンプル

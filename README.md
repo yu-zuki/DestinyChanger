@@ -6,6 +6,7 @@
 - **制作内容**: 3DモデリングとBGM、そしてミニマップにはUEのアセットを利用し、それ以外の部分は全て個人で制作しました。
 
 [→プレイ動画](#プレイ動画)
+[→実行ファイルダウンロード](#実行ファイルのダウンロード)
 ## 1. プロジェクトの概要
 
 趣味としてARPG（アクションロールプレイングゲーム）を制作しました！
@@ -1108,6 +1109,7 @@ int32 UQuestSystem::GetDefeatRecords(FName ItemID)
 
 ## 8. プロジェクトのリンク
 - [GitHubリポジトリ](https://github.com/yu-zuki/DestinyChanger)  
+### 実行ファイルのダウンロード
 - [実行可能なデモ Github](https://github.com/yu-zuki/DestinyChanger/releases/tag/Demov1.0)
 - [実行可能なデモ GoogleDrive](https://drive.google.com/drive/folders/1w2h7GhYy8HUFfTIW6YDCepHEAFAgkzOj?usp=drive_link)
 

@@ -1084,7 +1084,7 @@ int32 UQuestSystem::GetDefeatRecords(FName ItemID)
 
 
 ## 7. ビジュアルとメディア
-![スクリーンショット](screenshot_url.png)  
+![スクリーンショット](Document/Title.png)  
 
 ### プレイ動画
 [プロジェクトデモビデオ](https://youtu.be/-7P6c4o86i4)

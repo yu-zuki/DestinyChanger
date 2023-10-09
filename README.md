@@ -221,10 +221,10 @@ void UAttackPlayerBT::AttackEnd()
 
 ## 7. ビジュアルとメディア
 ![スクリーンショット](screenshot_url.png)  
-[プロジェクトデモビデオ](video_url)
+[プロジェクトデモビデオ](https://youtu.be/-7P6c4o86i4)
 
 ## 8. プロジェクトのリンク
-- [GitHubリポジトリ](https://github.com/your-username/project-repo)  
+- [GitHubリポジトリ](https://github.com/yu-zuki/DestinyChanger)  
 - [実行可能なデモ](https://demo_url)
 
 ## 9. 連絡先情報

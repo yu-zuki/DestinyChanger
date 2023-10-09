@@ -136,7 +136,7 @@ protected:
 ![Blackboardのスクリーンショット](Document/AIEnemy_BD.png)
 
 - **エネミーAIのTaskNode処理の一例**
-- 
+  
 この処理では、Enemyがプレイヤーに攻撃し、攻撃アニメーションが終了するとプレイヤーの追跡ステートに切り替わります。
 
 ```AttackPlayerBT.cpp

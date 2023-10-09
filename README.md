@@ -1091,7 +1091,7 @@ int32 UQuestSystem::GetDefeatRecords(FName ItemID)
 
 ## 8. プロジェクトのリンク
 - [GitHubリポジトリ](https://github.com/yu-zuki/DestinyChanger)  
-- [実行可能なデモ](https://demo_url)
+- [実行可能なデモ](https://drive.google.com/drive/folders/1w2h7GhYy8HUFfTIW6YDCepHEAFAgkzOj?usp=drive_link)
 
 ## 9. 連絡先情報
 - 名前: トウ　ゼイキ
